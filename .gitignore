@@ -1,0 +1,16 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+
+# Node
+notes-web/node_modules/
+notes-web/build/
+
+# Environment
+appsettings.Development.json
+
+# OS
+.DS_Store
+Thumbs.db
