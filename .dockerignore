@@ -1,0 +1,21 @@
+# Git
+.git
+.gitignore
+
+# VS artifacts
+.vs
+*.user
+
+# .NET build output
+notes-api/bin
+notes-api/obj
+
+# Node
+notes-web/node_modules
+notes-web/dist
+notes-web/build
+
+# Docs & misc
+docs
+*.md
+*.sln

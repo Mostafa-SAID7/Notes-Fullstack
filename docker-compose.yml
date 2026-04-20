@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: notes-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d demo']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── .NET API ────────────────────────────────────────────────────────────────
+  notes-api:
+    build:
+      context: ./notes-api
+      dockerfile: Dockerfile
+    container_name: notes-api
+    restart: unless-stopped
+    ports:
+      - '5272:5272'
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__PostgresSqlConnection: >
+        Host=postgres;Database=demo;Username=postgres;Password=admin;
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ── React Web App ───────────────────────────────────────────────────────────
+  notes-web:
+    build:
+      context: ./notes-web
+      dockerfile: Dockerfile
+    container_name: notes-web
+    restart: unless-stopped
+    ports:
+      - '3000:80'
+    depends_on:
+      - notes-api
+
+volumes:
+  postgres_data:
