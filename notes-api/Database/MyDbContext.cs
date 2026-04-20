@@ -1,22 +1,9 @@
-using NotesApi.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using NotesApi.Database.Models;
 
-namespace NotesApi.Database
+namespace NotesApi.Database;
+
+public class MyDbContext(DbContextOptions<MyDbContext> options) : DbContext(options)
 {
-    public class MyDbContext : DbContext
-    {
-        protected readonly IConfiguration _configuration;
-
-        public MyDbContext(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(_configuration.GetConnectionString("PostgresSqlConnection"));
-        }
-
-        public DbSet<Note> Notes { get; set; }
-    }
+    public DbSet<Note> Notes => Set<Note>();
 }

@@ -1,69 +1,59 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NotesApi.Database;
 using NotesApi.Database.Models;
-using Microsoft.AspNetCore.Mvc;
 
-namespace NotesApi.Controllers
+namespace NotesApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class NotesController(MyDbContext db) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class NotesController : ControllerBase
+    // GET api/Notes
+    [HttpGet]
+    public async Task<ActionResult<List<Note>>> GetAll()
+        => await db.Notes.ToListAsync();
+
+    // GET api/Notes/5
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Note>> GetById(int id)
     {
-        private readonly MyDbContext _db;
+        var note = await db.Notes.FindAsync(id);
+        return note is null ? NotFound() : note;
+    }
 
-        public NotesController(MyDbContext db)
-        {
-            _db = db;
-        }
+    // POST api/Notes
+    [HttpPost]
+    public async Task<ActionResult<Note>> Create([FromBody] Note note)
+    {
+        note.CreatedDate = DateTime.UtcNow;
+        db.Notes.Add(note);
+        await db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetById), new { id = note.Id }, note);
+    }
 
-        // GET api/notes
-        [HttpGet]
-        public ActionResult<List<Note>> Get()
-        {
-            return _db.Notes.ToList();
-        }
+    // PUT api/Notes
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] Note value)
+    {
+        var note = await db.Notes.FindAsync(value.Id);
+        if (note is null) return NotFound();
 
-        // GET api/notes/5
-        [HttpGet("{id}")]
-        public ActionResult<Note> Get(int id)
-        {
-            var note = _db.Notes.FirstOrDefault(x => x.Id == id);
-            if (note == null) return NotFound();
-            return note;
-        }
+        note.Title = value.Title;
+        note.Desc  = value.Desc;
+        await db.SaveChangesAsync();
+        return NoContent();
+    }
 
-        // POST api/notes
-        [HttpPost]
-        public ActionResult Post([FromBody] Note value)
-        {
-            value.CreatedDate = DateTime.UtcNow;
-            _db.Notes.Add(value);
-            _db.SaveChanges();
-            return CreatedAtAction(nameof(Get), new { id = value.Id }, value);
-        }
+    // DELETE api/Notes/5
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var note = await db.Notes.FindAsync(id);
+        if (note is null) return NotFound();
 
-        // PUT api/notes
-        [HttpPut]
-        public ActionResult Put([FromBody] Note value)
-        {
-            var note = _db.Notes.FirstOrDefault(x => x.Id == value.Id);
-            if (note == null) return NotFound();
-
-            note.Title = value.Title;
-            note.Desc = value.Desc;
-            _db.SaveChanges();
-            return NoContent();
-        }
-
-        // DELETE api/notes/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
-        {
-            var note = _db.Notes.FirstOrDefault(x => x.Id == id);
-            if (note == null) return NotFound();
-
-            _db.Notes.Remove(note);
-            _db.SaveChanges();
-            return NoContent();
-        }
+        db.Notes.Remove(note);
+        await db.SaveChangesAsync();
+        return NoContent();
     }
 }
