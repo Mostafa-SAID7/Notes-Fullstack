@@ -1,10 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Toaster, toast } from 'sonner';
 import { Navbar } from './components/layout/Navbar';
 import { ErrorBanner } from './components/layout/ErrorBanner';
 import { Header } from './components/layout/Header';
 import { LoadingState } from './components/ui/LoadingState';
 import { EmptyState } from './components/ui/EmptyState';
 import { NoteGrid } from './components/ui/NoteGrid';
+import { ConfirmationModal } from './components/ui/ConfirmationModal';
 import { NoteModal } from './components/NoteModal';
 import { useNotes } from './hooks/useNotes';
 import { useSearch } from './hooks/useSearch';
@@ -20,6 +22,10 @@ function App() {
   const notes = useNotes();
   const search = useSearch(notes.notes);
   const form = useNoteForm();
+  const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; id: number }>({
+    isOpen: false,
+    id: 0,
+  });
 
   // Load notes on mount
   useEffect(() => {
@@ -34,17 +40,21 @@ function App() {
     form.openForEdit(id, title, desc);
   };
 
-  const handleDeleteClick = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this note?')) return;
+  const handleDeleteClick = (id: number) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
 
+  const handleConfirmDelete = async () => {
     try {
-      await notes.deleteNoteAsync(id);
+      await notes.deleteNoteAsync(confirmDelete.id);
+      toast.success('Note deleted successfully');
+      setConfirmDelete({ isOpen: false, id: 0 });
     } catch (err) {
       const apiError = err as any;
       if (isValidationError(apiError)) {
         form.setErrors(extractValidationErrors(apiError) || {});
       } else {
-        notes.error || 'Failed to delete note';
+        toast.error(notes.error || 'Failed to delete note');
       }
     }
   };
@@ -55,18 +65,23 @@ function App() {
     try {
       if (form.formState.id === 0) {
         await notes.createNoteAsync(form.formState.title, form.formState.desc);
+        toast.success('Note created successfully');
       } else {
         await notes.updateNoteAsync(
           form.formState.id,
           form.formState.title,
           form.formState.desc,
         );
+        toast.success('Note updated successfully');
       }
       form.close();
     } catch (err) {
       const apiError = err as any;
       if (isValidationError(apiError)) {
         form.setErrors(extractValidationErrors(apiError) || {});
+        toast.error('Validation failed');
+      } else {
+        toast.error('Failed to save note');
       }
     }
   };
@@ -76,6 +91,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#0F172A]">
+      <Toaster
+        position="top-right"
+        theme="dark"
+        richColors
+        closeButton
+      />
+
       <Navbar
         search={search.search}
         onSearchChange={search.handleSearch}
@@ -121,6 +143,18 @@ function App() {
         onDescChange={form.updateDesc}
         onSave={handleSaveNote}
         onClose={form.close}
+      />
+
+      <ConfirmationModal
+        isOpen={confirmDelete.isOpen}
+        title="Delete Note"
+        message="Are you sure you want to delete this note? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous
+        isLoading={isLoading}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: 0 })}
       />
     </div>
   );

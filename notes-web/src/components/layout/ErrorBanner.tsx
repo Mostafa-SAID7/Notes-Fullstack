@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdClose } from 'react-icons/md';
 
 interface ErrorBannerProps {
   message: string | null;
@@ -20,7 +21,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onClose }) =>
         className="text-red-400 hover:text-red-300"
         aria-label="Close error"
       >
-        ✕
+        <MdClose size={20} />
       </button>
     </div>
   );

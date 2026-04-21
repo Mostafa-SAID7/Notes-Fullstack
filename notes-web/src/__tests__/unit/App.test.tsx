@@ -4,6 +4,13 @@ import App from '../../App';
 import * as api from '../../services/api';
 
 vi.mock('../../services/api');
+vi.mock('sonner', () => ({
+  Toaster: () => null,
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
 
 const mockNotes = [
   { id: 1, title: 'First Note', desc: 'First description', createdDate: '2024-04-21T10:00:00Z' },
@@ -114,4 +121,29 @@ describe('App', () => {
       expect(screen.getByText('Server error')).toBeInTheDocument();
     });
   });
+
+  it('opens confirmation modal on delete click', async () => {
+    render(<App />);
+    await waitFor(() => screen.getByText('First Note'));
+    const buttons = screen.getAllByLabelText('Note options');
+    fireEvent.click(buttons[0]); // Click first note's menu button
+    fireEvent.click(screen.getByText('Delete'));
+    await waitFor(() => {
+      expect(screen.getByText('Delete Note')).toBeInTheDocument();
+    });
+  });
+
+  it('closes confirmation modal on cancel', async () => {
+    render(<App />);
+    await waitFor(() => screen.getByText('First Note'));
+    const buttons = screen.getAllByLabelText('Note options');
+    fireEvent.click(buttons[0]); // Click first note's menu button
+    fireEvent.click(screen.getByText('Delete'));
+    await waitFor(() => screen.getByText('Delete Note'));
+    fireEvent.click(screen.getByText('Cancel'));
+    await waitFor(() => {
+      expect(screen.queryByText('Delete Note')).not.toBeInTheDocument();
+    });
+  });
 });
+

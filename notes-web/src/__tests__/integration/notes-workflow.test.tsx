@@ -4,6 +4,13 @@ import App from '../../App';
 import * as api from '../../services/api';
 
 vi.mock('../../services/api');
+vi.mock('sonner', () => ({
+  Toaster: () => null,
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
 
 const mockNotes = [
   { id: 1, title: 'Existing Note', desc: 'Existing description', createdDate: '2024-04-21T10:00:00Z' },
@@ -68,7 +75,8 @@ describe('Notes Workflow Integration', () => {
     await waitFor(() => expect(screen.getByText('Existing Note')).toBeInTheDocument());
 
     // Open menu and click edit
-    fireEvent.click(screen.getByLabelText('Note options'));
+    const buttons = screen.getAllByLabelText('Note options');
+    fireEvent.click(buttons[0]); // Click first note's menu button
     fireEvent.click(screen.getByText('Edit'));
 
     // Modal should open with existing data
@@ -91,12 +99,9 @@ describe('Notes Workflow Integration', () => {
     });
   });
 
-  it('complete delete note workflow', async () => {
+  it('complete delete note workflow with confirmation', async () => {
     vi.mocked(api.deleteNote).mockResolvedValue(undefined);
     vi.mocked(api.getAllNotes).mockResolvedValueOnce(mockNotes).mockResolvedValueOnce([]);
-
-    // Mock window.confirm
-    window.confirm = vi.fn(() => true);
 
     render(<App />);
 
@@ -104,7 +109,14 @@ describe('Notes Workflow Integration', () => {
     await waitFor(() => expect(screen.getByText('Existing Note')).toBeInTheDocument());
 
     // Open menu and click delete
-    fireEvent.click(screen.getByLabelText('Note options'));
+    const buttons = screen.getAllByLabelText('Note options');
+    fireEvent.click(buttons[0]); // Click first note's menu button
+    fireEvent.click(screen.getByText('Delete'));
+
+    // Confirmation modal should appear
+    await waitFor(() => expect(screen.getByText('Delete Note')).toBeInTheDocument());
+
+    // Confirm delete
     fireEvent.click(screen.getByText('Delete'));
 
     // Verify API call
@@ -113,3 +125,4 @@ describe('Notes Workflow Integration', () => {
     });
   });
 });
+
