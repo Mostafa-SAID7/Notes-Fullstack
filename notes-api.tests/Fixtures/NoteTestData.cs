@@ -1,4 +1,5 @@
 using NotesApi.Database;
+using NotesApi.Database.Models;
 using NotesApi.DTOs;
 
 namespace NotesApi.Tests.Fixtures;
@@ -18,13 +19,12 @@ public static class NoteTestData
 
     public static NoteDto CreateTestNoteDto(int id = 1, string title = "Test Note", string description = "Test Description")
     {
-        return new NoteDto
-        {
-            Id = id,
-            Title = title,
-            Desc = description,
-            CreatedDate = DateTime.UtcNow.ToString("O"),
-        };
+        return new NoteDto(
+            Id: id,
+            Title: title,
+            Desc: description,
+            CreatedDate: DateTime.UtcNow
+        );
     }
 
     public static List<Note> CreateTestNotes(int count = 3)
