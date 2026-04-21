@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from '../../App';
+import { ThemeProvider } from '../../context/ThemeContext';
 import * as api from '../../services/api';
 
 vi.mock('../../services/api');
@@ -17,6 +18,10 @@ const mockNotes = [
   { id: 2, title: 'Second Note', desc: 'Second description', createdDate: '2024-04-20T10:00:00Z' },
 ];
 
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(<ThemeProvider>{component}</ThemeProvider>);
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(api.getAllNotes).mockResolvedValue(mockNotes);
@@ -24,12 +29,12 @@ beforeEach(() => {
 
 describe('App', () => {
   it('renders the navbar title', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     expect(screen.getByText('Notes App')).toBeInTheDocument();
   });
 
   it('loads and displays notes', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => {
       expect(screen.getByText('First Note')).toBeInTheDocument();
       expect(screen.getByText('Second Note')).toBeInTheDocument();
@@ -37,9 +42,9 @@ describe('App', () => {
   });
 
   it('filters notes by search', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
-    fireEvent.change(screen.getByPlaceholderText('Search notes...'), {
+    fireEvent.change(screen.getByPlaceholderText('Search...'), {
       target: { value: 'First' },
     });
     expect(screen.getByText('First Note')).toBeInTheDocument();
@@ -47,7 +52,7 @@ describe('App', () => {
   });
 
   it('opens modal on New Note click', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
     const buttons = screen.getAllByText('New Note');
     fireEvent.click(buttons[0]); // Click the navbar button, not the modal title
@@ -57,7 +62,7 @@ describe('App', () => {
   });
 
   it('closes modal on Cancel', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
     fireEvent.click(screen.getByText('New Note'));
     await waitFor(() => screen.getByPlaceholderText('Title'));
@@ -68,7 +73,7 @@ describe('App', () => {
   });
 
   it('shows validation error for empty title', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
     fireEvent.click(screen.getByText('New Note'));
     await waitFor(() => screen.getByPlaceholderText('Description'));
@@ -89,7 +94,7 @@ describe('App', () => {
       createdDate: '2024-04-21T10:00:00Z',
     });
 
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
     fireEvent.click(screen.getByText('New Note'));
     await waitFor(() => screen.getByPlaceholderText('Title'));
@@ -116,14 +121,14 @@ describe('App', () => {
       timestamp: new Date().toISOString(),
     });
 
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => {
       expect(screen.getByText('Server error')).toBeInTheDocument();
     });
   });
 
   it('opens confirmation modal on delete click', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
     const buttons = screen.getAllByLabelText('Note options');
     fireEvent.click(buttons[0]); // Click first note's menu button
@@ -134,7 +139,7 @@ describe('App', () => {
   });
 
   it('closes confirmation modal on cancel', async () => {
-    render(<App />);
+    renderWithTheme(<App />);
     await waitFor(() => screen.getByText('First Note'));
     const buttons = screen.getAllByLabelText('Note options');
     fireEvent.click(buttons[0]); // Click first note's menu button

@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 :root {
-  /* Blue-centered high-contrast palette */
+  /* Blue-centered high-contrast palette - Dark mode */
   --background: #0F172A;
   --foreground: #F1F5F9;
 
   --primary: #3B82F6;
+  --primary-rgb: 59, 130, 246;
   --primary-foreground: #FFFFFF;
 
   --secondary: #1E40AF;
@@ -34,6 +35,34 @@
   --font-display: 'Inter', system-ui, sans-serif;
 }
 
+html.light {
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+
+  --primary: #2563EB;
+  --primary-rgb: 37, 99, 235;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #1E40AF;
+  --secondary-foreground: #DBEAFE;
+
+  --accent: #3B82F6;
+  --accent-foreground: #FFFFFF;
+
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+
+  --card: #F9FAFB;
+  --card-foreground: #0F172A;
+
+  --border: rgba(37, 99, 235, 0.2);
+  --input: #F3F4F6;
+  --ring: #2563EB;
+
+  --surface: #F3F4F6;
+  --surface-2: #E5E7EB;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -51,6 +80,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -68,56 +98,77 @@
 @layer components {
   /* App shell */
   .app-navbar {
-    @apply w-full bg-[#1E293B] border-b border-[rgba(59,130,246,0.2)] px-6 py-4 flex items-center gap-4 shadow-lg;
+    @apply w-full bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 py-4 
+           flex items-center gap-2 sm:gap-4 shadow-lg transition-colors duration-300;
   }
 
   .app-navbar-title {
-    @apply text-xl font-bold text-white tracking-tight;
+    @apply text-lg sm:text-xl font-bold text-[var(--foreground)] tracking-tight flex items-center gap-2 flex-shrink-0;
   }
 
   .app-search {
-    @apply flex-1 max-w-sm bg-[#0F172A] border border-[rgba(59,130,246,0.3)] rounded-lg px-4 py-2
-           text-slate-200 placeholder-slate-500 text-sm
-           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    @apply flex-1 min-w-0 bg-[var(--input)] border border-[var(--border)] rounded-lg px-3 sm:px-4 py-2
+           text-[var(--foreground)] placeholder-[var(--muted-foreground)] text-sm
+           focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent
            transition-all duration-200;
+  }
+
+  .app-navbar-actions {
+    @apply flex items-center gap-2 flex-shrink-0;
   }
 
   /* Buttons */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2
-           bg-blue-600 hover:bg-blue-500 active:bg-blue-700
-           text-white font-semibold text-sm
-           px-5 py-2.5 rounded-lg
+           bg-[var(--primary)] hover:opacity-90 active:opacity-75
+           text-[var(--primary-foreground)] font-semibold text-sm
+           px-4 sm:px-5 py-2.5 rounded-lg
            shadow-md shadow-blue-900/40
            transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-[#0F172A];
+           focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--background)]
+           disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2
-           bg-slate-700 hover:bg-slate-600 active:bg-slate-800
-           text-slate-200 font-medium text-sm
-           px-5 py-2.5 rounded-lg
-           border border-slate-600
+           bg-[var(--surface-2)] hover:bg-[var(--surface)] active:bg-[var(--surface-2)]
+           text-[var(--foreground)] font-medium text-sm
+           px-4 sm:px-5 py-2.5 rounded-lg
+           border border-[var(--border)]
            transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-[#0F172A];
+           focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--background)]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center
+           text-[var(--foreground)] hover:text-[var(--primary)]
+           p-2 rounded-lg
+           hover:bg-[var(--surface-2)]
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+           disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Note card */
   .note-card {
-    @apply bg-[#1E293B] border border-[rgba(59,130,246,0.15)] rounded-xl p-5
+    @apply bg-[var(--card)] border border-[var(--border)] rounded-xl p-5
            flex flex-col gap-3
            shadow-md
-           hover:border-blue-500/40 hover:shadow-blue-900/30 hover:shadow-lg
+           hover:shadow-lg
            transition-all duration-300;
   }
 
+  .note-card:hover {
+    border-color: rgba(var(--primary-rgb), 0.4);
+  }
+
   .note-card-title {
-    @apply text-base font-semibold text-white leading-snug;
+    @apply text-base font-semibold text-[var(--foreground)] leading-snug;
   }
 
   .note-card-desc {
-    @apply text-sm text-slate-400 leading-relaxed flex-1;
+    @apply text-sm text-[var(--muted-foreground)] leading-relaxed flex-1;
   }
 
   /* Modal */
@@ -126,26 +177,26 @@
   }
 
   .modal-box {
-    @apply bg-[#1E293B] border border-[rgba(59,130,246,0.25)] rounded-2xl p-6
-           w-full max-w-md shadow-2xl shadow-blue-950/50
+    @apply bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6
+           w-full max-w-md shadow-2xl
            flex flex-col gap-4;
   }
 
   .modal-title {
-    @apply text-lg font-bold text-white;
+    @apply text-lg font-bold text-[var(--foreground)];
   }
 
   .modal-input {
-    @apply w-full bg-[#0F172A] border border-[rgba(59,130,246,0.3)] rounded-lg px-4 py-2.5
-           text-slate-200 placeholder-slate-500 text-sm
-           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    @apply w-full bg-[var(--input)] border border-[var(--border)] rounded-lg px-4 py-2.5
+           text-[var(--foreground)] placeholder-[var(--muted-foreground)] text-sm
+           focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent
            transition-all duration-200;
   }
 
   .modal-textarea {
-    @apply w-full bg-[#0F172A] border border-[rgba(59,130,246,0.3)] rounded-lg px-4 py-2.5
-           text-slate-200 placeholder-slate-500 text-sm resize-none
-           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    @apply w-full bg-[var(--input)] border border-[var(--border)] rounded-lg px-4 py-2.5
+           text-[var(--foreground)] placeholder-[var(--muted-foreground)] text-sm resize-none
+           focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent
            transition-all duration-200;
   }
 }
@@ -178,12 +229,17 @@
   scrollbar-color: #3B82F6 #1E293B;
 }
 
+html.light * {
+  scrollbar-color: #2563EB #F3F4F6;
+}
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #1E293B; border-radius: 999px; }
+::-webkit-scrollbar-track { background: var(--surface); border-radius: 999px; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3B82F6 0%, #1E40AF 100%);
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%);
+  opacity: 0.8;
 }
+

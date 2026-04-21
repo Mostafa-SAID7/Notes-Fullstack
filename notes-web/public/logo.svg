@@ -1,0 +1,25 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#1E293B" stroke="#3B82F6" stroke-width="2"/>
+  
+  <!-- Notebook pages -->
+  <g transform="translate(60, 50)">
+    <!-- Back page -->
+    <rect x="0" y="0" width="60" height="80" rx="4" fill="#0F172A" stroke="#3B82F6" stroke-width="1.5" opacity="0.6"/>
+    
+    <!-- Middle page -->
+    <rect x="8" y="8" width="60" height="80" rx="4" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5" opacity="0.8"/>
+    
+    <!-- Front page -->
+    <rect x="16" y="16" width="60" height="80" rx="4" fill="#334155" stroke="#3B82F6" stroke-width="2"/>
+    
+    <!-- Lines on front page -->
+    <line x1="24" y1="32" x2="68" y2="32" stroke="#60A5FA" stroke-width="1.5" opacity="0.7"/>
+    <line x1="24" y1="44" x2="68" y2="44" stroke="#60A5FA" stroke-width="1.5" opacity="0.7"/>
+    <line x1="24" y1="56" x2="68" y2="56" stroke="#60A5FA" stroke-width="1.5" opacity="0.7"/>
+    <line x1="24" y1="68" x2="60" y2="68" stroke="#60A5FA" stroke-width="1.5" opacity="0.7"/>
+    
+    <!-- Pen accent -->
+    <circle cx="72" cy="28" r="3" fill="#3B82F6"/>
+  </g>
+</svg>

@@ -90,7 +90,7 @@ function App() {
   const hasNotes = search.filteredNotes.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#0F172A]">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <Toaster
         position="top-right"
         theme="dark"
@@ -110,7 +110,7 @@ function App() {
         onClose={notes.clearError}
       />
 
-      <main className="container mx-auto px-6 py-10">
+      <main className="container mx-auto px-4 sm:px-6 py-10">
         <Header
           totalCount={search.filteredNotes.length}
           searchTerm={search.search}

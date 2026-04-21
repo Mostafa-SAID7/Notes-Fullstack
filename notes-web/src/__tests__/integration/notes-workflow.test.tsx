@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from '../../App';
+import { ThemeProvider } from '../../context/ThemeContext';
 import * as api from '../../services/api';
 
 vi.mock('../../services/api');
@@ -15,6 +16,10 @@ vi.mock('sonner', () => ({
 const mockNotes = [
   { id: 1, title: 'Existing Note', desc: 'Existing description', createdDate: '2024-04-21T10:00:00Z' },
 ];
+
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(<ThemeProvider>{component}</ThemeProvider>);
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -33,7 +38,7 @@ describe('Notes Workflow Integration', () => {
     vi.mocked(api.createNote).mockResolvedValue(newNote);
     vi.mocked(api.getAllNotes).mockResolvedValueOnce(mockNotes).mockResolvedValueOnce([...mockNotes, newNote]);
 
-    render(<App />);
+    renderWithTheme(<App />);
 
     // Wait for initial load
     await waitFor(() => expect(screen.getByText('Existing Note')).toBeInTheDocument());
@@ -69,7 +74,7 @@ describe('Notes Workflow Integration', () => {
     vi.mocked(api.updateNote).mockResolvedValue(updatedNote);
     vi.mocked(api.getAllNotes).mockResolvedValueOnce(mockNotes).mockResolvedValueOnce([updatedNote]);
 
-    render(<App />);
+    renderWithTheme(<App />);
 
     // Wait for initial load
     await waitFor(() => expect(screen.getByText('Existing Note')).toBeInTheDocument());
@@ -103,7 +108,7 @@ describe('Notes Workflow Integration', () => {
     vi.mocked(api.deleteNote).mockResolvedValue(undefined);
     vi.mocked(api.getAllNotes).mockResolvedValueOnce(mockNotes).mockResolvedValueOnce([]);
 
-    render(<App />);
+    renderWithTheme(<App />);
 
     // Wait for initial load
     await waitFor(() => expect(screen.getByText('Existing Note')).toBeInTheDocument());
