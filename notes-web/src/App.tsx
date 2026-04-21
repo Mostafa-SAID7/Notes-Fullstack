@@ -1,168 +1,127 @@
-import { useEffect, useState } from 'react';
-import Note from './components/Note';
-import type { Note as NoteType, NotePayload } from './types/note';
+import { useEffect } from 'react';
+import { Navbar } from './components/layout/Navbar';
+import { ErrorBanner } from './components/layout/ErrorBanner';
+import { Header } from './components/layout/Header';
+import { LoadingState } from './components/ui/LoadingState';
+import { EmptyState } from './components/ui/EmptyState';
+import { NoteGrid } from './components/ui/NoteGrid';
+import { NoteModal } from './components/NoteModal';
+import { useNotes } from './hooks/useNotes';
+import { useSearch } from './hooks/useSearch';
+import { useNoteForm } from './hooks/useNoteForm';
+import { isValidationError, extractValidationErrors } from './utils/validation';
 import './App.css';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5272/api/Notes';
-
+/**
+ * App component - Main application container
+ * Responsibilities: Orchestrate hooks, manage data flow, render layout
+ */
 function App() {
-  const [notes, setNotes] = useState<NoteType[]>([]);
-  const [filteredList, setFilteredNotes] = useState<NoteType[]>([]);
-  const [search, setSearch] = useState('');
-  const [openModal, setOpen] = useState(false);
-  const [selId, setSelId] = useState(0);
-  const [selTxt, setSelTxt] = useState('');
-  const [selDesc, setSelDesc] = useState('');
+  const notes = useNotes();
+  const search = useSearch(notes.notes);
+  const form = useNoteForm();
 
-  useEffect(() => { loadData(); }, []);
+  // Load notes on mount
+  useEffect(() => {
+    notes.loadNotes();
+  }, []);
 
-  const loadData = (): void => {
-    fetch(API_BASE)
-      .then(r => r.json())
-      .then((data: NoteType[]) => {
-        setNotes(data);
-        setFilteredNotes(data);
-        setSearch('');
-      })
-      .catch(() => {
-        setNotes([]);
-        setFilteredNotes([]);
-        setSearch('');
-      });
+  const handleCreateClick = () => {
+    form.openForCreate();
   };
 
-  const filterData = (val: string): void => {
-    if (val !== '') {
-      setFilteredNotes(
-        notes.filter(n =>
-          n.title.toLowerCase().includes(val.toLowerCase()) ||
-          n.desc.toLowerCase().includes(val.toLowerCase()),
-        ),
-      );
-    } else {
-      setFilteredNotes(notes);
+  const handleEditClick = (id: number, title: string, desc: string) => {
+    form.openForEdit(id, title, desc);
+  };
+
+  const handleDeleteClick = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this note?')) return;
+
+    try {
+      await notes.deleteNoteAsync(id);
+    } catch (err) {
+      const apiError = err as any;
+      if (isValidationError(apiError)) {
+        form.setErrors(extractValidationErrors(apiError) || {});
+      } else {
+        notes.error || 'Failed to delete note';
+      }
     }
   };
 
-  const doSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSearch(e.target.value);
-    filterData(e.target.value);
-  };
+  const handleSaveNote = async () => {
+    if (!form.validateForm()) return;
 
-  const createNote = (): void => {
-    setSelId(0);
-    setSelTxt('');
-    setSelDesc('');
-    setOpen(true);
-  };
-
-  const save = (): void => {
-    if (selTxt.trim() === '' || selDesc.trim() === '') {
-      alert('Title and description are required');
-      return;
+    try {
+      if (form.formState.id === 0) {
+        await notes.createNoteAsync(form.formState.title, form.formState.desc);
+      } else {
+        await notes.updateNoteAsync(
+          form.formState.id,
+          form.formState.title,
+          form.formState.desc,
+        );
+      }
+      form.close();
+    } catch (err) {
+      const apiError = err as any;
+      if (isValidationError(apiError)) {
+        form.setErrors(extractValidationErrors(apiError) || {});
+      }
     }
-    const payload: NotePayload = { id: selId, title: selTxt, desc: selDesc };
-    fetch(API_BASE, {
-      method: selId === 0 ? 'POST' : 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-      .then(() => { loadData(); setOpen(false); })
-      .catch(() => setOpen(false));
   };
 
-  const edit = (id: number, txt: string, desc: string): void => {
-    setSelId(id);
-    setSelTxt(txt);
-    setSelDesc(desc);
-    setOpen(true);
-  };
-
-  const deleteNote = (id: number): void => {
-    fetch(`${API_BASE}/${id}`, { method: 'DELETE' })
-      .then(() => { loadData(); setOpen(false); })
-      .catch(() => setOpen(false));
-  };
+  const isLoading = notes.loading;
+  const hasNotes = search.filteredNotes.length > 0;
 
   return (
     <div className="min-h-screen bg-[#0F172A]">
+      <Navbar
+        search={search.search}
+        onSearchChange={search.handleSearch}
+        onCreateClick={handleCreateClick}
+        isLoading={isLoading}
+      />
 
-      {/* Navbar */}
-      <nav className="app-navbar">
-        <span className="app-navbar-title">📝 Notes App</span>
-        <input
-          className="app-search"
-          placeholder="Search notes..."
-          value={search}
-          onChange={doSearch}
-        />
-        <button className="btn-primary" onClick={createNote}>
-          + New Note
-        </button>
-      </nav>
+      <ErrorBanner
+        message={notes.error}
+        onClose={notes.clearError}
+      />
 
-      {/* Main content */}
       <main className="container mx-auto px-6 py-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white mb-1">My Notes</h1>
-          <p className="text-slate-400 text-sm">
-            {filteredList.length} {filteredList.length === 1 ? 'note' : 'notes'}
-            {search && ` matching "${search}"`}
-          </p>
-        </div>
+        <Header
+          totalCount={search.filteredNotes.length}
+          searchTerm={search.search}
+        />
 
-        {filteredList.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredList.map(note => (
-              <Note key={note.id} note={note} onEdit={edit} onDelete={deleteNote} />
-            ))}
-          </div>
+        {isLoading && !hasNotes ? (
+          <LoadingState />
+        ) : hasNotes ? (
+          <NoteGrid
+            notes={search.filteredNotes}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+          />
         ) : (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <div className="text-5xl">📭</div>
-            <p className="text-slate-400 text-base">No notes yet.</p>
-            <button className="btn-primary" onClick={createNote}>
-              Take your first note
-            </button>
-          </div>
+          <EmptyState
+            onCreateClick={handleCreateClick}
+            isLoading={isLoading}
+          />
         )}
       </main>
 
-      {/* Modal */}
-      {openModal && (
-        <div
-          className="modal-overlay"
-          onClick={e => { if (e.target === e.currentTarget) setOpen(false); }}
-        >
-          <div className="modal-box">
-            <h2 className="modal-title">{selId === 0 ? 'New Note' : 'Edit Note'}</h2>
-
-            <input
-              className="modal-input"
-              placeholder="Title"
-              value={selTxt}
-              onChange={e => setSelTxt(e.target.value)}
-            />
-
-            <textarea
-              className="modal-textarea"
-              placeholder="Description"
-              rows={5}
-              value={selDesc}
-              onChange={e => setSelDesc(e.target.value)}
-            />
-
-            <div className="flex gap-3 justify-end pt-1">
-              <button className="btn-secondary" onClick={() => setOpen(false)}>
-                Cancel
-              </button>
-              <button className="btn-primary" onClick={save}>
-                Save Note
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <NoteModal
+        isOpen={form.isOpen}
+        isNew={form.formState.id === 0}
+        title={form.formState.title}
+        desc={form.formState.desc}
+        validationErrors={form.validationErrors}
+        isLoading={isLoading}
+        onTitleChange={form.updateTitle}
+        onDescChange={form.updateDesc}
+        onSave={handleSaveNote}
+        onClose={form.close}
+      />
     </div>
   );
 }

@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { Note as NoteType } from '../types/note';
+import { NoteMenu } from './NoteMenu';
+import { formatDate } from '../utils/dateFormatter';
 
 interface NoteProps {
   note: NoteType;
@@ -7,13 +9,28 @@ interface NoteProps {
   onDelete: (id: number) => void;
 }
 
-function Note({ note, onEdit, onDelete }: NoteProps) {
+/**
+ * Note component - Individual note card
+ * Responsibilities: Display note content, menu, actions
+ */
+export const Note: React.FC<NoteProps> = ({ note, onEdit, onDelete }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleEdit = () => {
+    setMenuOpen(false);
+    onEdit(note.id, note.title, note.desc);
+  };
+
+  const handleDelete = () => {
+    setMenuOpen(false);
+    onDelete(note.id);
+  };
 
   return (
     <div className="note-card relative">
       <h3 className="note-card-title">{note.title}</h3>
       <p className="note-card-desc line-clamp-4">{note.desc}</p>
+      <p className="text-xs text-slate-500 mt-2">{formatDate(note.createdDate)}</p>
 
       <div className="flex justify-end mt-1 relative">
         <button
@@ -29,27 +46,13 @@ function Note({ note, onEdit, onDelete }: NoteProps) {
         </button>
 
         {menuOpen && (
-          <>
-            <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-            <div className="absolute right-0 bottom-8 z-20 bg-[#1E293B] border border-[rgba(59,130,246,0.25)] rounded-xl shadow-xl shadow-blue-950/40 overflow-hidden min-w-[120px]">
-              <button
-                className="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-blue-600/20 hover:text-blue-300 transition-colors duration-150"
-                onClick={() => { setMenuOpen(false); onEdit(note.id, note.title, note.desc); }}
-              >
-                ✏️ Edit
-              </button>
-              <button
-                className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors duration-150"
-                onClick={() => { setMenuOpen(false); onDelete(note.id); }}
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          </>
+          <NoteMenu
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onClose={() => setMenuOpen(false)}
+          />
         )}
       </div>
     </div>
   );
-}
-
-export default Note;
+};

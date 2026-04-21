@@ -1,59 +1,65 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NotesApi.Database;
-using NotesApi.Database.Models;
+using NotesApi.DTOs;
+using NotesApi.Features.Notes;
 
 namespace NotesApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class NotesController(MyDbContext db) : ControllerBase
+public class NotesController(IMediator mediator) : ControllerBase
 {
     // GET api/Notes
     [HttpGet]
-    public async Task<ActionResult<List<Note>>> GetAll()
-        => await db.Notes.ToListAsync();
+    public async Task<ActionResult<IReadOnlyList<NoteDto>>> GetAll()
+    {
+        var result = await mediator.Send(new GetAllNotesQuery());
+        return Ok(result);
+    }
 
     // GET api/Notes/5
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Note>> GetById(int id)
+    public async Task<ActionResult<NoteDto>> GetById(int id)
     {
-        var note = await db.Notes.FindAsync(id);
-        return note is null ? NotFound() : note;
+        var result = await mediator.Send(new GetNoteByIdQuery(id));
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
     }
 
     // POST api/Notes
     [HttpPost]
-    public async Task<ActionResult<Note>> Create([FromBody] Note note)
+    public async Task<ActionResult<NoteDto>> Create([FromBody] CreateNoteRequest request)
     {
-        note.CreatedDate = DateTime.UtcNow;
-        db.Notes.Add(note);
-        await db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = note.Id }, note);
+        var command = new CreateNoteCommand(request.Title, request.Desc);
+        var result = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     // PUT api/Notes
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] Note value)
+    public async Task<IActionResult> Update([FromBody] UpdateNoteRequest request)
     {
-        var note = await db.Notes.FindAsync(value.Id);
-        if (note is null) return NotFound();
+        var command = new UpdateNoteCommand(request.Id, request.Title, request.Desc);
+        var result = await mediator.Send(command);
 
-        note.Title = value.Title;
-        note.Desc  = value.Desc;
-        await db.SaveChangesAsync();
-        return NoContent();
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
     }
 
     // DELETE api/Notes/5
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var note = await db.Notes.FindAsync(id);
-        if (note is null) return NotFound();
+        var command = new DeleteNoteCommand(id);
+        var success = await mediator.Send(command);
 
-        db.Notes.Remove(note);
-        await db.SaveChangesAsync();
+        if (!success)
+            return NotFound();
+
         return NoContent();
     }
 }
