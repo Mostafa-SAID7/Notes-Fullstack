@@ -2,8 +2,8 @@ using UnitOfWorkImpl = NotesApi.UnitOfWork.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Logging ───────────────────────────────────────────────────────────────────
-builder.Logging.AddStructuredLogging(builder.Configuration);
+// ── Serilog Logging ───────────────────────────────────────────────────────────
+builder.AddSerilogLogging();
 
 // ── Services ──────────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
@@ -29,7 +29,19 @@ app.UseCorsPolicy();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Logger.LogInformation("Starting Notes API application");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 /// <summary>
 /// Program class for integration testing
