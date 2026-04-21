@@ -11,6 +11,7 @@ import { NoteModal } from './components/NoteModal';
 import { useNotes } from './hooks/useNotes';
 import { useSearch } from './hooks/useSearch';
 import { useNoteForm } from './hooks/useNoteForm';
+import { useTheme } from './context/ThemeContext';
 import { isValidationError, extractValidationErrors } from './utils/validation';
 import './App.css';
 
@@ -19,6 +20,7 @@ import './App.css';
  * Responsibilities: Orchestrate hooks, manage data flow, render layout
  */
 function App() {
+  const { theme } = useTheme();
   const notes = useNotes();
   const search = useSearch(notes.notes);
   const form = useNoteForm();
@@ -93,7 +95,7 @@ function App() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <Toaster
         position="top-right"
-        theme="dark"
+        theme={theme}
         richColors
         closeButton
       />
