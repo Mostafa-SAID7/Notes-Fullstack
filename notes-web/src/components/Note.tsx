@@ -27,15 +27,15 @@ export const Note: React.FC<NoteProps> = ({ note, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="note-card relative">
-      <h3 className="note-card-title">{note.title}</h3>
-      <p className="note-card-desc line-clamp-4">{note.desc}</p>
-      <p className="text-xs text-slate-500 mt-2">{formatDate(note.createdDate)}</p>
+    <div className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 shadow-md hover:shadow-lg hover:border-blue-400/40 transition-all duration-300 relative">
+      <h3 className="text-base font-semibold text-foreground leading-snug">{note.title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-4">{note.desc}</p>
+      <p className="text-xs text-muted-foreground mt-2">{formatDate(note.createdDate)}</p>
 
       <div className="flex justify-end mt-1 relative">
         <button
           onClick={() => setMenuOpen(o => !o)}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors duration-150"
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-150"
           aria-label="Note options"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

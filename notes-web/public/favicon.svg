@@ -1,22 +1,31 @@
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="100" height="100" fill="#1E293B"/>
+  <!-- Rounded background with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0F172A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
   
-  <!-- Notebook -->
-  <g transform="translate(20, 15)">
+  <!-- Rounded background -->
+  <rect width="100" height="100" rx="24" fill="url(#bgGradient)"/>
+  
+  <!-- Notebook with enhanced contrast -->
+  <g transform="translate(18, 12)">
     <!-- Back page -->
-    <rect x="0" y="0" width="30" height="40" rx="2" fill="#0F172A" stroke="#3B82F6" stroke-width="1" opacity="0.6"/>
+    <rect x="0" y="0" width="32" height="44" rx="3" fill="#0F172A" stroke="#2563EB" stroke-width="1.2" opacity="0.5"/>
     
     <!-- Middle page -->
-    <rect x="4" y="4" width="30" height="40" rx="2" fill="#1E293B" stroke="#3B82F6" stroke-width="1" opacity="0.8"/>
+    <rect x="5" y="5" width="32" height="44" rx="3" fill="#1E293B" stroke="#3B82F6" stroke-width="1.2" opacity="0.7"/>
     
-    <!-- Front page -->
-    <rect x="8" y="8" width="30" height="40" rx="2" fill="#334155" stroke="#3B82F6" stroke-width="1.5"/>
+    <!-- Front page - main focus -->
+    <rect x="10" y="10" width="32" height="44" rx="3" fill="#334155" stroke="#60A5FA" stroke-width="2"/>
     
-    <!-- Lines -->
-    <line x1="12" y1="16" x2="34" y2="16" stroke="#60A5FA" stroke-width="0.8" opacity="0.7"/>
-    <line x1="12" y1="22" x2="34" y2="22" stroke="#60A5FA" stroke-width="0.8" opacity="0.7"/>
-    <line x1="12" y1="28" x2="34" y2="28" stroke="#60A5FA" stroke-width="0.8" opacity="0.7"/>
-    <line x1="12" y1="34" x2="30" y2="34" stroke="#60A5FA" stroke-width="0.8" opacity="0.7"/>
+    <!-- Lines with better contrast -->
+    <line x1="14" y1="18" x2="38" y2="18" stroke="#93C5FD" stroke-width="1" opacity="0.9"/>
+    <line x1="14" y1="25" x2="38" y2="25" stroke="#93C5FD" stroke-width="1" opacity="0.9"/>
+    <line x1="14" y1="32" x2="38" y2="32" stroke="#93C5FD" stroke-width="1" opacity="0.9"/>
+    <line x1="14" y1="39" x2="34" y2="39" stroke="#93C5FD" stroke-width="1" opacity="0.9"/>
   </g>
 </svg>
+
