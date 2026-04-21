@@ -7,7 +7,7 @@ namespace NotesApi.Features.Notes;
 
 // ── Query ─────────────────────────────────────────────────────────────────────
 
-public sealed record GetAllNotesQuery : IRequest<IReadOnlyList<NoteDto>>;
+public sealed record GetAllNotesQuery : IRequest<IReadOnlyList<NoteDto>>, IQuery;
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 

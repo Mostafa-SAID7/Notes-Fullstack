@@ -7,7 +7,7 @@ namespace NotesApi.Features.Notes;
 
 // ── Query ─────────────────────────────────────────────────────────────────────
 
-public sealed record GetNoteByIdQuery(int Id) : IRequest<NoteDto?>;
+public sealed record GetNoteByIdQuery(int Id) : IRequest<NoteDto?>, IQuery;
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 

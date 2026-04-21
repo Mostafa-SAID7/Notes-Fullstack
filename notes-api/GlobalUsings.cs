@@ -1,0 +1,13 @@
+global using System.Text.Json;
+global using FluentValidation;
+global using MediatR;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Caching.Distributed;
+global using Microsoft.Extensions.Caching.Memory;
+global using NotesApi.Behaviors;
+global using NotesApi.Common;
+global using NotesApi.Config;
+global using NotesApi.Database;
+global using NotesApi.Features;
+global using NotesApi.Middleware;
+global using NotesApi.Services;
