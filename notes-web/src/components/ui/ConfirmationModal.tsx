@@ -32,13 +32,13 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in"
       onClick={e => { if (e.target === e.currentTarget) onCancel(); }}
     >
-      <div className="bg-card border border-border rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
+      <div className="bg-card border border-border rounded-xl shadow-xl p-6 max-w-sm w-full mx-4 animate-scale-in">
         <div className="flex items-start gap-3 mb-4">
           {isDangerous && (
-            <MdWarning className="text-red-400 flex-shrink-0 mt-0.5" size={24} />
+            <MdWarning className="text-red-400 flex-shrink-0 mt-0.5 animate-slide-down" size={24} />
           )}
           <div>
             <h3 className="text-lg font-semibold text-foreground">{title}</h3>

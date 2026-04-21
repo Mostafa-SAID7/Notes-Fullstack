@@ -34,10 +34,10 @@ export const NoteModal: React.FC<NoteModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl flex flex-col gap-4">
+      <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl flex flex-col gap-4 animate-scale-in">
         <h2 className="text-lg font-bold text-foreground">{isNew ? 'New Note' : 'Edit Note'}</h2>
 
         <FormField error={validationErrors.Title?.[0]}>
