@@ -23,7 +23,7 @@
   --card: #1E293B;
   --card-foreground: #F1F5F9;
 
-  --border: rgba(59, 130, 246, 0.2);
+  --border: rgba(59, 130, 246, 0.12);
   --input: #1E293B;
   --ring: #3B82F6;
   --radius: 0.75rem;
@@ -55,7 +55,7 @@ html.light {
   --card: #F9FAFB;
   --card-foreground: #0F172A;
 
-  --border: rgba(37, 99, 235, 0.2);
+  --border: rgba(37, 99, 235, 0.12);
   --input: #F3F4F6;
   --ring: #2563EB;
 

@@ -27,7 +27,7 @@ export const Note: React.FC<NoteProps> = ({ note, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 shadow-md hover:shadow-lg hover:border-blue-400/40 transition-all duration-300 relative">
+    <div className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 shadow-md hover:shadow-lg hover:border-primary/30 transition-all duration-300 relative">
       <h3 className="text-base font-semibold text-foreground leading-snug">{note.title}</h3>
       <p className="text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-4">{note.desc}</p>
       <p className="text-xs text-muted-foreground mt-2">{formatDate(note.createdDate)}</p>
