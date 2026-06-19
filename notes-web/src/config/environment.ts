@@ -3,7 +3,7 @@
  * Centralized configuration for API endpoints and app settings
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5272/api/notes';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/notes';
 
 export const environment = {
   api: {

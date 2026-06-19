@@ -8,7 +8,7 @@
 
 import type { Note, CreateNoteRequest, UpdateNoteRequest, ApiError } from '../types/note';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5272/api/notes';
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/notes';
 
 // Log API configuration in development
 if (import.meta.env.DEV) {
