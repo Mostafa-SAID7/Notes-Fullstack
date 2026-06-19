@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   MdNotes, MdPushPin, MdLocalOffer, MdLogout, MdAdd,
-  MdDarkMode, MdLightMode, MdClose, MdCheck, MdBarChart,
+  MdCheck, MdBarChart, MdClose,
 } from 'react-icons/md';
 import { useTheme, ACCENT_PRESETS } from '../../context/ThemeContext';
 import type { AccentColor } from '../../context/ThemeContext';
@@ -32,31 +32,68 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'z-a',    label: 'Z → A' },
 ];
 
+const NavBtn: React.FC<{
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  badge?: React.ReactNode;
+}> = ({ active, onClick, icon, label, badge }) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+      active
+        ? 'text-white shadow-sm'
+        : 'text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
+    }`}
+    style={active ? { background: 'rgb(var(--primary-rgb))' } : {}}
+  >
+    <span className="flex-shrink-0">{icon}</span>
+    <span className="flex-1 text-left truncate">{label}</span>
+    {badge}
+  </button>
+);
+
 export const Sidebar: React.FC<SidebarProps> = ({
   isOpen, onClose, view, activeTag, allTags, sort,
   onViewChange, onSortChange, onCreateClick, totalCount = 0, pinnedCount = 0,
 }) => {
-  const { theme, toggleTheme, accentColor, setAccentColor } = useTheme();
+  const { accentColor, setAccentColor } = useTheme();
   const { user, logout } = useAuth();
 
   const initials = user?.username
     ? user.username.slice(0, 2).toUpperCase()
     : '??';
 
+  const handleNav = (v: SidebarView, tag?: string) => {
+    onViewChange(v, tag);
+    onClose();
+  };
+
   return (
     <>
+      {/* Mobile backdrop */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-20 lg:hidden" onClick={onClose} />
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-20 lg:hidden"
+          onClick={onClose}
+        />
       )}
 
-      <aside className={`
-        fixed top-0 left-0 h-full z-30 w-64
-        bg-[var(--surface)] border-r border-[var(--border)]
-        flex flex-col transition-transform duration-300 ease-in-out
-        lg:static lg:translate-x-0 lg:z-auto
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="flex items-center justify-between px-4 pt-5 pb-4">
+      {/* Sidebar panel — always fixed, slides in/out */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full z-30 w-64
+          bg-[var(--surface)] border-r border-[var(--border)]
+          flex flex-col
+          transition-transform duration-300 ease-in-out
+          will-change-transform
+          ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
+        `}
+        aria-label="Sidebar navigation"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 pt-5 pb-3 flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -68,13 +105,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="lg:hidden p-1.5 rounded-xl hover:bg-[var(--surface-2)] text-[var(--muted-foreground)] transition-colors"
+            className="p-1.5 rounded-xl hover:bg-[var(--surface-2)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            aria-label="Close sidebar"
           >
-            <MdClose size={17} />
+            <MdClose size={18} />
           </button>
         </div>
 
-        <div className="px-3 pb-3">
+        {/* New Note button */}
+        <div className="px-3 pb-3 flex-shrink-0">
           <button
             onClick={() => { onCreateClick(); onClose(); }}
             className="app-btn-primary w-full justify-center text-sm py-2.5 rounded-xl"
@@ -84,52 +123,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-0.5">
-          <button
-            onClick={() => { onViewChange('all'); onClose(); }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-              view === 'all'
-                ? 'bg-[rgb(var(--primary-rgb))] text-white shadow-sm'
-                : 'text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
-            }`}
-          >
-            <MdNotes size={17} />
-            <span className="flex-1 text-left">All Notes</span>
-            {totalCount > 0 && (
-              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full tabular-nums ${
+        {/* Scrollable nav area */}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 pb-2 flex flex-col gap-0.5 scrollbar-hide hover:scrollbar-default">
+          <NavBtn
+            active={view === 'all'}
+            onClick={() => handleNav('all')}
+            icon={<MdNotes size={17} />}
+            label="All Notes"
+            badge={totalCount > 0 ? (
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full tabular-nums flex-shrink-0 ${
                 view === 'all' ? 'bg-white/20 text-white' : 'bg-[var(--surface-2)] text-[var(--muted-foreground)]'
               }`}>{totalCount}</span>
-            )}
-          </button>
+            ) : undefined}
+          />
 
-          <button
-            onClick={() => { onViewChange('pinned'); onClose(); }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-              view === 'pinned'
-                ? 'bg-[rgb(var(--primary-rgb))] text-white shadow-sm'
-                : 'text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
-            }`}
-          >
-            <MdPushPin size={17} />
-            <span className="flex-1 text-left">Pinned</span>
-            {pinnedCount > 0 && (
-              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full tabular-nums ${
+          <NavBtn
+            active={view === 'pinned'}
+            onClick={() => handleNav('pinned')}
+            icon={<MdPushPin size={17} />}
+            label="Pinned"
+            badge={pinnedCount > 0 ? (
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full tabular-nums flex-shrink-0 ${
                 view === 'pinned' ? 'bg-white/20 text-white' : 'bg-amber-400/15 text-amber-400'
               }`}>{pinnedCount}</span>
-            )}
-          </button>
+            ) : undefined}
+          />
 
-          <button
-            onClick={() => { onViewChange('stats'); onClose(); }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-              view === 'stats'
-                ? 'bg-[rgb(var(--primary-rgb))] text-white shadow-sm'
-                : 'text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
-            }`}
-          >
-            <MdBarChart size={17} />
-            <span className="flex-1 text-left">Stats</span>
-          </button>
+          <NavBtn
+            active={view === 'stats'}
+            onClick={() => handleNav('stats')}
+            icon={<MdBarChart size={17} />}
+            label="Stats"
+          />
 
           {allTags.length > 0 && (
             <div className="pt-4">
@@ -140,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {allTags.map(tag => (
                   <button
                     key={tag}
-                    onClick={() => { onViewChange('tag', tag); onClose(); }}
+                    onClick={() => handleNav('tag', tag)}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-150 ${
                       view === 'tag' && activeTag === tag
                         ? 'font-semibold'
@@ -151,7 +176,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       background: 'rgba(var(--primary-rgb), 0.1)',
                     } : {}}
                   >
-                    <MdLocalOffer size={13} />
+                    <MdLocalOffer size={13} className="flex-shrink-0" />
                     <span className="truncate">#{tag}</span>
                   </button>
                 ))}
@@ -173,22 +198,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </nav>
 
-        <div className="border-t border-[var(--border)] p-3 flex flex-col gap-1">
-          {user && (
-            <div className="flex items-center gap-2.5 px-2 py-2 mb-1 rounded-xl">
-              <div
-                className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-bold text-white select-none"
-                style={{ background: 'rgba(var(--primary-rgb), 0.8)' }}
-              >
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-[var(--foreground)] truncate">{user.username}</p>
-                <p className="text-[10px] text-[var(--muted-foreground)] truncate">{user.email}</p>
-              </div>
-            </div>
-          )}
-          <div className="px-3 py-2">
+        {/* Footer: accent colours + user + logout */}
+        <div className="flex-shrink-0 border-t border-[var(--border)] p-3 flex flex-col gap-1">
+          {/* Accent colour picker */}
+          <div className="px-3 py-1.5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-2 select-none">
               Accent
             </p>
@@ -201,12 +214,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     key={key}
                     title={preset.label}
                     onClick={() => setAccentColor(key)}
-                    className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150 hover:scale-110"
+                    className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150 hover:scale-110 focus:outline-none"
                     style={{
                       backgroundColor: preset.swatch,
                       outline: isActive ? `2px solid ${preset.swatch}` : '2px solid transparent',
                       outlineOffset: '2px',
                     }}
+                    aria-label={`${preset.label} accent`}
                   >
                     {isActive && <MdCheck size={12} className="text-white drop-shadow" />}
                   </button>
@@ -215,13 +229,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={toggleTheme}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)] transition-all duration-150"
-          >
-            {theme === 'dark' ? <MdLightMode size={17} /> : <MdDarkMode size={17} />}
-            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-          </button>
+          {/* User info */}
+          {user && (
+            <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[var(--surface-2)] transition-colors min-w-0">
+              <div
+                className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-bold text-white select-none"
+                style={{ background: 'rgba(var(--primary-rgb), 0.8)' }}
+              >
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold text-[var(--foreground)] truncate">{user.username}</p>
+                <p className="text-[10px] text-[var(--muted-foreground)] truncate">{user.email}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Sign out */}
           <button
             onClick={logout}
             className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all duration-150"

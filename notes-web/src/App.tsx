@@ -30,7 +30,10 @@ function App() {
   const search = useSearch(notes.notes);
   const form = useNoteForm();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Sidebar: starts open on desktop (≥1024px), closed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth >= 1024,
+  );
   const [sidebarView, setSidebarView] = useState<SidebarView>('all');
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; id: number }>({
     isOpen: false, id: 0,
@@ -46,10 +49,8 @@ function App() {
 
   const handleViewChange = useCallback((view: SidebarView, tag?: string) => {
     setSidebarView(view);
-    if (view === 'pinned') search.handleTagFilter(null);
+    if (view !== 'tag') search.handleTagFilter(null);
     if (view === 'tag' && tag) search.handleTagFilter(tag);
-    if (view === 'all') search.handleTagFilter(null);
-    if (view === 'stats') search.handleTagFilter(null);
   }, [search]);
 
   const handleCreateClick = () => form.openForCreate();
@@ -119,10 +120,17 @@ function App() {
         onSearchChange={isStats ? () => {} : search.handleSearch}
         onCreateClick={handleCreateClick}
         onMenuToggle={() => setSidebarOpen(o => !o)}
+        sidebarOpen={sidebarOpen}
         isLoading={isLoading}
       />
 
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 relative">
+        {/* Desktop spacer — pushes main content when sidebar is open */}
+        <div
+          className="hidden lg:block flex-shrink-0 transition-all duration-300 ease-in-out"
+          style={{ width: sidebarOpen ? '256px' : '0px' }}
+        />
+
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
@@ -137,15 +145,15 @@ function App() {
           pinnedCount={notes.notes.filter(n => n.isPinned).length}
         />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto min-w-0">
           <ErrorBanner message={notes.error} onClose={notes.clearError} />
 
           {isStats ? (
-            <div className="page-enter">
+            <div key="stats" className="page-enter">
               <StatsPage notes={notes.notes} />
             </div>
           ) : (
-            <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl page-enter">
+            <div key="notes" className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-6xl page-enter">
               <Header
                 totalCount={displayNotes.length}
                 searchTerm={search.search}

@@ -22,6 +22,7 @@ await app.InitialiseDatabaseAsync();
 if (app.Environment.IsDevelopment())
     app.UseSwaggerDocs();
 
+app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCorsPolicy();
 app.UseAuthentication();

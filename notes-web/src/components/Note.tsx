@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { Note as NoteType } from '../types/note';
 import { NOTE_COLORS } from '../types/note';
 import { formatDate } from '../utils/dateFormatter';
@@ -11,23 +11,10 @@ interface NoteProps {
   onPin: (id: number, isPinned: boolean) => void;
 }
 
-const ACCENT_COLORS: Record<string, string> = {
-  default: 'bg-slate-500',
-  yellow:  'bg-yellow-400',
-  green:   'bg-emerald-500',
-  blue:    'bg-blue-500',
-  red:     'bg-red-500',
-  purple:  'bg-purple-500',
-  orange:  'bg-orange-400',
-  pink:    'bg-pink-400',
-  brown:   'bg-amber-700',
-};
-
 const wordCount = (t: string) => t.trim() ? t.trim().split(/\s+/).length : 0;
 
 export const Note: React.FC<NoteProps> = ({ note, onEdit, onDelete, onPin }) => {
   const colorConfig = NOTE_COLORS.find(c => c.value === note.color) ?? NOTE_COLORS[0];
-  const accent = ACCENT_COLORS[note.color] ?? 'bg-slate-500';
 
   return (
     <div
@@ -40,11 +27,12 @@ export const Note: React.FC<NoteProps> = ({ note, onEdit, onDelete, onPin }) => 
         ${colorConfig.bg}
       `}
     >
-      <div className={`h-1 w-full flex-shrink-0 ${accent} opacity-90`} />
-
       <div className="p-4 flex flex-col gap-2.5 flex-1">
         <div className="flex items-start justify-between gap-1.5">
-          <h3 className="text-base font-bold text-[var(--foreground)] leading-snug line-clamp-2 flex-1 min-w-0" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h3
+            className="text-base font-bold text-[var(--foreground)] leading-snug line-clamp-2 flex-1 min-w-0"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
             {note.title}
           </h3>
           <button
