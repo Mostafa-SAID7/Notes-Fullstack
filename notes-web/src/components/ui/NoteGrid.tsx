@@ -12,8 +12,15 @@ interface NoteGridProps {
 export const NoteGrid: React.FC<NoteGridProps> = ({ notes, onEdit, onDelete, onPin }) => {
   return (
     <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 [column-fill:_balance]">
-      {notes.map(note => (
-        <div key={note.id} className="break-inside-avoid mb-4">
+      {notes.map((note, i) => (
+        <div
+          key={note.id}
+          className="break-inside-avoid mb-4"
+          style={{
+            animation: 'fadeSlideUp 0.35s ease both',
+            animationDelay: `${Math.min(i * 40, 400)}ms`,
+          }}
+        >
           <Note
             note={note}
             onEdit={onEdit}

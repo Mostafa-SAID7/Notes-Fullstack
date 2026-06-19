@@ -55,7 +55,7 @@ export const RegisterPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8" style={{ animation: 'fadeSlideUp 0.4s ease both' }}>
           <div
             className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 text-3xl"
             style={{ background: 'rgba(var(--primary-rgb), 0.12)' }}
@@ -71,7 +71,7 @@ export const RegisterPage: React.FC = () => {
           <p className="text-[var(--muted-foreground)] text-sm mt-1">Start taking notes today — it's free</p>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-xl">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-xl auth-card-enter">
           {error && (
             <div className="mb-4 px-3 py-2.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-2">
               <span>⚠️</span>

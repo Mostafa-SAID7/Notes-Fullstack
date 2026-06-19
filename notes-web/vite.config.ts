@@ -16,6 +16,19 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor':    ['sonner', 'react-icons'],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

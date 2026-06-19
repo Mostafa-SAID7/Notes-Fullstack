@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── CSS Variables ─── */
 :root {
   --background: #0F172A;
   --foreground: #F1F5F9;
@@ -44,6 +45,37 @@ html.light {
   --surface-2: #E2E8F0;
 }
 
+/* ─── Keyframes ─── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Base ─── */
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
@@ -75,12 +107,10 @@ html.light {
 
   p { margin: 0; }
 
-  /* Apply heading font to all modal/section titles */
   .font-heading {
     font-family: var(--font-heading);
   }
 
-  /* Remove all default select/input/button browser chrome */
   select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -103,6 +133,7 @@ html.light {
   }
 }
 
+/* ─── Components ─── */
 @layer components {
   .app-input {
     @apply w-full bg-[var(--input)] border border-[var(--border)] rounded-xl px-4 py-2.5
@@ -126,13 +157,22 @@ html.light {
 
   .app-btn-primary {
     @apply inline-flex items-center justify-center gap-1.5
-           hover:opacity-90 active:opacity-75
            text-white font-semibold text-sm
            px-4 py-2.5 rounded-xl
            shadow-sm transition-all duration-150
            focus:outline-none
            disabled:opacity-50 disabled:cursor-not-allowed;
     background-color: rgb(var(--primary-rgb));
+    transform: translateY(0);
+  }
+  .app-btn-primary:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.35);
+  }
+  .app-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    opacity: 0.8;
   }
   .app-btn-primary:focus-visible {
     box-shadow: 0 0 0 2px var(--background), 0 0 0 4px rgba(var(--primary-rgb), 0.5);
@@ -147,12 +187,35 @@ html.light {
            transition-all duration-150
            focus:outline-none
            disabled:opacity-50 disabled:cursor-not-allowed;
+    transform: translateY(0);
+  }
+  .app-btn-secondary:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .app-btn-secondary:active:not(:disabled) {
+    transform: translateY(0);
   }
   .app-btn-secondary:focus-visible {
     box-shadow: 0 0 0 2px var(--background), 0 0 0 4px rgba(var(--primary-rgb), 0.5);
   }
+
+  /* Page entry animation */
+  .page-enter {
+    animation: fadeSlideUp 0.3s ease both;
+  }
+
+  /* Auth card animation */
+  .auth-card-enter {
+    animation: scaleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Sidebar items */
+  .sidebar-item-enter {
+    animation: slideInRight 0.25s ease both;
+  }
 }
 
+/* ─── Utilities ─── */
 @layer utilities {
   .animate-theme-transition {
     transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
@@ -165,9 +228,21 @@ html.light {
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  .animate-shimmer {
+    animation: shimmer 1.6s infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease both;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease both;
+  }
 }
 
-/* Scrollbar */
+/* ─── Scrollbar ─── */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--primary-rgb), 0.4) transparent;

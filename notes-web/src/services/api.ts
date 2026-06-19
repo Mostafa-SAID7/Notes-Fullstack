@@ -3,7 +3,7 @@ import type { Note, CreateNoteRequest, UpdateNoteRequest, PinNoteRequest, ApiErr
 const API_BASE = (import.meta.env.VITE_API_BASE ?? 'http://localhost:8000/api');
 const NOTES_URL = `${API_BASE}/notes`;
 
-const getToken = (): string | null => localStorage.getItem('auth_token');
+const getToken = (): string | null => localStorage.getItem('nf_token');
 
 const authHeaders = (): Record<string, string> => {
   const token = getToken();

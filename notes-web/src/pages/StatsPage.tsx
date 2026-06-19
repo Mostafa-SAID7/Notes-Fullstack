@@ -37,7 +37,9 @@ export const StatsPage: React.FC<StatsPageProps> = ({ notes }) => {
     }, 0);
 
     const allTags = notes.flatMap(n =>
-      n.tags ? n.tags.split(',').map(t => t.trim()).filter(Boolean) : []
+      typeof n.tags === 'string' && n.tags.trim()
+        ? n.tags.split(',').map(t => t.trim()).filter(Boolean)
+        : []
     );
     const tagFreq = allTags.reduce<Record<string, number>>((acc, t) => {
       acc[t] = (acc[t] || 0) + 1;

@@ -141,9 +141,11 @@ function App() {
           <ErrorBanner message={notes.error} onClose={notes.clearError} />
 
           {isStats ? (
-            <StatsPage notes={notes.notes} />
+            <div className="page-enter">
+              <StatsPage notes={notes.notes} />
+            </div>
           ) : (
-            <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
+            <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl page-enter">
               <Header
                 totalCount={displayNotes.length}
                 searchTerm={search.search}
