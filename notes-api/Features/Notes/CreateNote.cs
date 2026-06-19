@@ -6,22 +6,27 @@ using NotesApi.DTOs;
 
 namespace NotesApi.Features.Notes;
 
-// ── Command ───────────────────────────────────────────────────────────────────
-
-public sealed record CreateNoteCommand(string Title, string Desc) : IRequest<NoteDto>;
-
-// ── Handler ───────────────────────────────────────────────────────────────────
+public sealed record CreateNoteCommand(
+    string Title,
+    string Desc,
+    string Color,
+    List<string> Tags) : IRequest<NoteDto>;
 
 public sealed class CreateNoteHandler(IUnitOfWork uow, IMapper mapper)
     : IRequestHandler<CreateNoteCommand, NoteDto>
 {
     public async Task<NoteDto> Handle(CreateNoteCommand request, CancellationToken ct)
     {
+        var now = DateTime.UtcNow;
         var note = new Note
         {
             Title       = request.Title,
             Desc        = request.Desc,
-            CreatedDate = DateTime.UtcNow,
+            Color       = request.Color,
+            Tags        = string.Join(",", request.Tags ?? []),
+            CreatedDate = now,
+            UpdatedAt   = now,
+            IsPinned    = false,
         };
 
         await uow.Notes.AddAsync(note);

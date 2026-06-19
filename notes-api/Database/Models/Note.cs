@@ -9,5 +9,9 @@ namespace NotesApi.Database.Models
         public required string Title { get; set; }
         public required string Desc { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public bool IsPinned { get; set; } = false;
+        public string Color { get; set; } = "default";
+        public string Tags { get; set; } = "";
     }
 }

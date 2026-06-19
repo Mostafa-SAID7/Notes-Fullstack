@@ -1,0 +1,2 @@
+- [EF Core manual migrations](ef-core-manual-migrations.md) — manually written migrations need a designer file + history entry, or columns won't apply
+- [AutoMapper records ForCtorParam](automapper-record-ctorparam.md) — use ForCtorParam not ForMember when mapping to C# record constructor parameters

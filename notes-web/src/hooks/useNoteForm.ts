@@ -1,43 +1,50 @@
 import { useState, useCallback } from 'react';
+import type { NoteColor } from '../types/note';
 
 export interface NoteFormState {
   id: number;
   title: string;
   desc: string;
+  color: NoteColor;
+  tags: string[];
 }
 
 export interface ValidationErrors {
   [key: string]: string[];
 }
 
-/**
- * Custom hook for managing note form state
- * Handles: form fields, validation errors, modal state
- */
 export const useNoteForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formState, setFormState] = useState<NoteFormState>({
     id: 0,
     title: '',
     desc: '',
+    color: 'default',
+    tags: [],
   });
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   const openForCreate = useCallback(() => {
-    setFormState({ id: 0, title: '', desc: '' });
+    setFormState({ id: 0, title: '', desc: '', color: 'default', tags: [] });
     setValidationErrors({});
     setIsOpen(true);
   }, []);
 
-  const openForEdit = useCallback((id: number, title: string, desc: string) => {
-    setFormState({ id, title, desc });
+  const openForEdit = useCallback((
+    id: number,
+    title: string,
+    desc: string,
+    color: NoteColor,
+    tags: string[],
+  ) => {
+    setFormState({ id, title, desc, color, tags });
     setValidationErrors({});
     setIsOpen(true);
   }, []);
 
   const close = useCallback(() => {
     setIsOpen(false);
-    setFormState({ id: 0, title: '', desc: '' });
+    setFormState({ id: 0, title: '', desc: '', color: 'default', tags: [] });
     setValidationErrors({});
   }, []);
 
@@ -47,6 +54,14 @@ export const useNoteForm = () => {
 
   const updateDesc = useCallback((desc: string) => {
     setFormState(prev => ({ ...prev, desc }));
+  }, []);
+
+  const updateColor = useCallback((color: NoteColor) => {
+    setFormState(prev => ({ ...prev, color }));
+  }, []);
+
+  const updateTags = useCallback((tags: string[]) => {
+    setFormState(prev => ({ ...prev, tags }));
   }, []);
 
   const setErrors = useCallback((errors: ValidationErrors) => {
@@ -59,20 +74,12 @@ export const useNoteForm = () => {
 
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
-
-    if (!formState.title.trim()) {
-      errors.Title = ['Title is required'];
-    }
-
-    if (!formState.desc.trim()) {
-      errors.Desc = ['Description is required'];
-    }
-
+    if (!formState.title.trim()) errors.Title = ['Title is required'];
+    if (!formState.desc.trim()) errors.Desc = ['Description is required'];
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return false;
     }
-
     return true;
   };
 
@@ -85,6 +92,8 @@ export const useNoteForm = () => {
     close,
     updateTitle,
     updateDesc,
+    updateColor,
+    updateTags,
     setErrors,
     clearErrors,
     validateForm,

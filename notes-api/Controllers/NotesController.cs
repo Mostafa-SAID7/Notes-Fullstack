@@ -32,7 +32,11 @@ public class NotesController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<NoteDto>> Create([FromBody] CreateNoteRequest request)
     {
-        var command = new CreateNoteCommand(request.Title, request.Desc);
+        var command = new CreateNoteCommand(
+            request.Title,
+            request.Desc,
+            request.Color ?? "default",
+            request.Tags ?? []);
         var result = await mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
@@ -41,7 +45,25 @@ public class NotesController(IMediator mediator) : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateNoteRequest request)
     {
-        var command = new UpdateNoteCommand(request.Id, request.Title, request.Desc);
+        var command = new UpdateNoteCommand(
+            request.Id,
+            request.Title,
+            request.Desc,
+            request.Color ?? "default",
+            request.Tags ?? []);
+        var result = await mediator.Send(command);
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    // PATCH api/Notes/5/pin
+    [HttpPatch("{id:int}/pin")]
+    public async Task<IActionResult> Pin(int id, [FromBody] PinNoteRequest request)
+    {
+        var command = new PinNoteCommand(id, request.IsPinned);
         var result = await mediator.Send(command);
 
         if (result is null)
