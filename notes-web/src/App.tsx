@@ -130,6 +130,8 @@ function App() {
           onViewChange={handleViewChange}
           onSortChange={search.handleSort}
           onCreateClick={handleCreateClick}
+          totalCount={notes.notes.length}
+          pinnedCount={notes.notes.filter(n => n.isPinned).length}
         />
 
         <main className="flex-1 overflow-y-auto">

@@ -1,17 +1,30 @@
 import React from 'react';
-import { MdNotes } from 'react-icons/md';
 
-/**
- * LoadingState component - Shows loading indicator with animation
- * Responsibilities: Display animated loading spinner
- */
-export const LoadingState: React.FC = () => {
-  return (
-    <div className="flex flex-col items-center justify-center py-24 gap-4">
-      <div className="animate-spin">
-        <MdNotes size={48} className="text-blue-400" />
+const SkeletonCard: React.FC<{ height?: string }> = ({ height = 'h-36' }) => (
+  <div className={`rounded-2xl overflow-hidden bg-[var(--card)] border border-[var(--border)] ${height} flex flex-col`}>
+    <div className="h-1.5 w-full bg-[var(--surface-2)] animate-pulse" />
+    <div className="p-4 flex flex-col gap-3 flex-1">
+      <div className="h-4 rounded-md bg-[var(--surface-2)] animate-pulse w-3/4" />
+      <div className="h-3 rounded-md bg-[var(--surface-2)] animate-pulse w-full opacity-60" />
+      <div className="h-3 rounded-md bg-[var(--surface-2)] animate-pulse w-5/6 opacity-50" />
+      <div className="h-3 rounded-md bg-[var(--surface-2)] animate-pulse w-2/3 opacity-40" />
+      <div className="mt-auto flex gap-1.5">
+        <div className="h-4 w-12 rounded-full bg-[var(--surface-2)] animate-pulse" />
+        <div className="h-4 w-10 rounded-full bg-[var(--surface-2)] animate-pulse opacity-70" />
       </div>
-      <p className="text-slate-400">Loading notes...</p>
+    </div>
+  </div>
+);
+
+export const LoadingState: React.FC = () => {
+  const heights = ['h-40', 'h-52', 'h-36', 'h-44', 'h-48', 'h-36', 'h-52', 'h-40', 'h-44'];
+  return (
+    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+      {heights.map((h, i) => (
+        <div key={i} className="break-inside-avoid">
+          <SkeletonCard height={h} />
+        </div>
+      ))}
     </div>
   );
 };
