@@ -14,7 +14,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">{viewLabel}</h1>
+        <h1 className="text-3xl font-bold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-heading)' }}>{viewLabel}</h1>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--muted-foreground)] border border-[var(--border)]">
             {totalCount} {totalCount === 1 ? 'note' : 'notes'}

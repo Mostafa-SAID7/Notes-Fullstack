@@ -21,7 +21,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick, isLoading
         </div>
       </div>
       <div className="text-center max-w-xs">
-        <h3 className="text-base font-semibold text-[var(--foreground)] mb-1">No notes yet</h3>
+        <h3 className="text-2xl font-bold text-[var(--foreground)] mb-1" style={{ fontFamily: 'var(--font-heading)' }}>No notes yet</h3>
         <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
           Start capturing your thoughts, ideas, and tasks. Your notes will appear here.
         </p>

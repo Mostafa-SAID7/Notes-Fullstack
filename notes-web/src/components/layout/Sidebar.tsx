@@ -1,9 +1,10 @@
 import React from 'react';
 import {
   MdNotes, MdPushPin, MdLocalOffer, MdLogout, MdAdd,
-  MdDarkMode, MdLightMode, MdClose,
+  MdDarkMode, MdLightMode, MdClose, MdCheck,
 } from 'react-icons/md';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme, ACCENT_PRESETS } from '../../context/ThemeContext';
+import type { AccentColor } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import type { SortOption } from '../../types/note';
 import { CustomSelect } from '../ui/CustomSelect';
@@ -35,7 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen, onClose, view, activeTag, allTags, sort,
   onViewChange, onSortChange, onCreateClick, totalCount = 0, pinnedCount = 0,
 }) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, accentColor, setAccentColor } = useTheme();
   const { user, logout } = useAuth();
 
   const initials = user?.username
@@ -175,6 +176,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
           )}
+          <div className="px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-2 select-none">
+              Accent
+            </p>
+            <div className="flex items-center gap-2">
+              {(Object.keys(ACCENT_PRESETS) as AccentColor[]).map(key => {
+                const preset = ACCENT_PRESETS[key];
+                const isActive = accentColor === key;
+                return (
+                  <button
+                    key={key}
+                    title={preset.label}
+                    onClick={() => setAccentColor(key)}
+                    className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150 hover:scale-110"
+                    style={{
+                      backgroundColor: preset.swatch,
+                      outline: isActive ? `2px solid ${preset.swatch}` : '2px solid transparent',
+                      outlineOffset: '2px',
+                    }}
+                  >
+                    {isActive && <MdCheck size={12} className="text-white drop-shadow" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <button
             onClick={toggleTheme}
             className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)] transition-all duration-150"

@@ -44,7 +44,7 @@ export const Note: React.FC<NoteProps> = ({ note, onEdit, onDelete, onPin }) => 
 
       <div className="p-4 flex flex-col gap-2.5 flex-1">
         <div className="flex items-start justify-between gap-1.5">
-          <h3 className="text-sm font-semibold text-[var(--foreground)] leading-snug line-clamp-2 flex-1 min-w-0">
+          <h3 className="text-base font-bold text-[var(--foreground)] leading-snug line-clamp-2 flex-1 min-w-0" style={{ fontFamily: 'var(--font-heading)' }}>
             {note.title}
           </h3>
           <button

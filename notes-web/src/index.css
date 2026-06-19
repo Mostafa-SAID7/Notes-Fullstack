@@ -6,17 +6,10 @@
   --background: #0F172A;
   --foreground: #F1F5F9;
 
-  --primary: #3B82F6;
+  /* --primary-rgb is set dynamically by ThemeContext; default = blue */
   --primary-rgb: 59, 130, 246;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #1E40AF;
-  --secondary-foreground: #BFDBFE;
-
-  --accent: #60A5FA;
-  --accent-foreground: #0F172A;
-
-  --muted: #1E293B;
   --muted-foreground: #94A3B8;
 
   --card: #1E293B;
@@ -24,30 +17,21 @@
 
   --border: rgba(148, 163, 184, 0.12);
   --input: #1E293B;
-  --ring: #3B82F6;
   --radius: 0.75rem;
 
   --surface: #182032;
   --surface-2: #273549;
 
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Caveat', cursive;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
 }
 
 html.light {
   --background: #F8FAFC;
   --foreground: #0F172A;
 
-  --primary: #2563EB;
-  --primary-rgb: 37, 99, 235;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #1E40AF;
-  --secondary-foreground: #DBEAFE;
-
-  --accent: #3B82F6;
-  --accent-foreground: #FFFFFF;
-
-  --muted: #F1F5F9;
   --muted-foreground: #64748B;
 
   --card: #FFFFFF;
@@ -55,7 +39,6 @@ html.light {
 
   --border: rgba(15, 23, 42, 0.1);
   --input: #F1F5F9;
-  --ring: #2563EB;
 
   --surface: #F1F5F9;
   --surface-2: #E2E8F0;
@@ -74,6 +57,8 @@ html.light {
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -82,11 +67,18 @@ html.light {
 
   h1, h2, h3, h4, h5, h6 {
     margin: 0;
+    font-family: var(--font-heading);
     font-weight: 700;
     color: var(--foreground);
+    letter-spacing: 0.01em;
   }
 
   p { margin: 0; }
+
+  /* Apply heading font to all modal/section titles */
+  .font-heading {
+    font-family: var(--font-heading);
+  }
 
   /* Remove all default select/input/button browser chrome */
   select {

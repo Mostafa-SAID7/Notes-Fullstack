@@ -61,7 +61,7 @@ export const NoteModal: React.FC<NoteModalProps> = ({
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl w-full max-w-xl shadow-2xl flex flex-col animate-scale-in max-h-[92vh]">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
           <div>
-            <h2 className="text-base font-bold text-[var(--foreground)]">
+            <h2 className="text-xl font-bold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-heading)' }}>
               {isNew ? 'New Note' : 'Edit Note'}
             </h2>
             <p className="text-xs text-[var(--muted-foreground)] mt-0.5">

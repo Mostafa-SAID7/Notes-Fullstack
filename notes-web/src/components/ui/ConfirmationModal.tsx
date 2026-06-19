@@ -41,7 +41,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <MdDeleteForever size={28} className="text-red-400" />
           </div>
         )}
-        <h3 className="text-base font-bold text-[var(--foreground)] text-center mb-1.5">{title}</h3>
+        <h3 className="text-xl font-bold text-[var(--foreground)] text-center mb-1.5" style={{ fontFamily: 'var(--font-heading)' }}>{title}</h3>
         <p className="text-sm text-[var(--muted-foreground)] text-center leading-relaxed mb-6">{message}</p>
 
         <div className="flex gap-3">
