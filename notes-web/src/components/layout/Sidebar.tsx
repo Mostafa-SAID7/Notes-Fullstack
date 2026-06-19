@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   MdNotes, MdPushPin, MdLocalOffer, MdLogout, MdAdd,
-  MdDarkMode, MdLightMode, MdClose, MdCheck,
+  MdDarkMode, MdLightMode, MdClose, MdCheck, MdBarChart,
 } from 'react-icons/md';
 import { useTheme, ACCENT_PRESETS } from '../../context/ThemeContext';
 import type { AccentColor } from '../../context/ThemeContext';
@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import type { SortOption } from '../../types/note';
 import { CustomSelect } from '../ui/CustomSelect';
 
-export type SidebarView = 'all' | 'pinned' | 'tag';
+export type SidebarView = 'all' | 'pinned' | 'tag' | 'stats';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -117,6 +117,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 view === 'pinned' ? 'bg-white/20 text-white' : 'bg-amber-400/15 text-amber-400'
               }`}>{pinnedCount}</span>
             )}
+          </button>
+
+          <button
+            onClick={() => { onViewChange('stats'); onClose(); }}
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+              view === 'stats'
+                ? 'bg-[rgb(var(--primary-rgb))] text-white shadow-sm'
+                : 'text-[var(--muted-foreground)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]'
+            }`}
+          >
+            <MdBarChart size={17} />
+            <span className="flex-1 text-left">Stats</span>
           </button>
 
           {allTags.length > 0 && (

@@ -10,6 +10,7 @@ import { EmptyState } from './components/ui/EmptyState';
 import { NoteGrid } from './components/ui/NoteGrid';
 import { ConfirmationModal } from './components/ui/ConfirmationModal';
 import { NoteModal } from './components/NoteModal';
+import { StatsPage } from './pages/StatsPage';
 import { useNotes } from './hooks/useNotes';
 import { useSearch } from './hooks/useSearch';
 import { useNoteForm } from './hooks/useNoteForm';
@@ -48,6 +49,7 @@ function App() {
     if (view === 'pinned') search.handleTagFilter(null);
     if (view === 'tag' && tag) search.handleTagFilter(tag);
     if (view === 'all') search.handleTagFilter(null);
+    if (view === 'stats') search.handleTagFilter(null);
   }, [search]);
 
   const handleCreateClick = () => form.openForCreate();
@@ -106,14 +108,15 @@ function App() {
 
   const isLoading = notes.loading;
   const hasNotes = displayNotes.length > 0;
+  const isStats = sidebarView === 'stats';
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col">
       <Toaster position="top-right" theme={theme} richColors closeButton />
 
       <Navbar
-        search={search.search}
-        onSearchChange={search.handleSearch}
+        search={isStats ? '' : search.search}
+        onSearchChange={isStats ? () => {} : search.handleSearch}
         onCreateClick={handleCreateClick}
         onMenuToggle={() => setSidebarOpen(o => !o)}
         isLoading={isLoading}
@@ -137,27 +140,31 @@ function App() {
         <main className="flex-1 overflow-y-auto">
           <ErrorBanner message={notes.error} onClose={notes.clearError} />
 
-          <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
-            <Header
-              totalCount={displayNotes.length}
-              searchTerm={search.search}
-              activeTag={sidebarView === 'tag' ? search.activeTag : null}
-              viewLabel={sidebarView === 'pinned' ? 'Pinned Notes' : 'My Notes'}
-            />
-
-            {isLoading && !hasNotes ? (
-              <LoadingState />
-            ) : hasNotes ? (
-              <NoteGrid
-                notes={displayNotes}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteClick}
-                onPin={handlePinClick}
+          {isStats ? (
+            <StatsPage notes={notes.notes} />
+          ) : (
+            <div className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
+              <Header
+                totalCount={displayNotes.length}
+                searchTerm={search.search}
+                activeTag={sidebarView === 'tag' ? search.activeTag : null}
+                viewLabel={sidebarView === 'pinned' ? 'Pinned Notes' : 'My Notes'}
               />
-            ) : (
-              <EmptyState onCreateClick={handleCreateClick} isLoading={isLoading} />
-            )}
-          </div>
+
+              {isLoading && !hasNotes ? (
+                <LoadingState />
+              ) : hasNotes ? (
+                <NoteGrid
+                  notes={displayNotes}
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteClick}
+                  onPin={handlePinClick}
+                />
+              ) : (
+                <EmptyState onCreateClick={handleCreateClick} isLoading={isLoading} />
+              )}
+            </div>
+          )}
         </main>
       </div>
 
