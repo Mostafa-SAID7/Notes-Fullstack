@@ -5,7 +5,7 @@ namespace NotesApi.Features.Notes;
 public class UpdateNoteValidator : AbstractValidator<UpdateNoteCommand>
 {
     private static readonly string[] ValidColors =
-        ["default", "yellow", "green", "blue", "red", "purple", "orange", "pink"];
+        ["default", "yellow", "green", "blue", "red", "purple", "orange", "pink", "brown"];
 
     public UpdateNoteValidator()
     {

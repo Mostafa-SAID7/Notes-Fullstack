@@ -6,6 +6,7 @@ using NotesApi.DTOs;
 namespace NotesApi.Features.Notes;
 
 public sealed record UpdateNoteCommand(
+    string UserId,
     int Id,
     string Title,
     string Desc,
@@ -17,9 +18,8 @@ public sealed class UpdateNoteHandler(IUnitOfWork uow, IMapper mapper)
 {
     public async Task<NoteDto?> Handle(UpdateNoteCommand request, CancellationToken ct)
     {
-        var note = await uow.Notes.GetByIdAsync(request.Id);
-        if (note is null)
-            return null;
+        var note = await uow.Notes.GetByIdAndUserAsync(request.Id, request.UserId);
+        if (note is null) return null;
 
         note.Title     = request.Title;
         note.Desc      = request.Desc;

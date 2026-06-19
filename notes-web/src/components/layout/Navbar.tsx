@@ -1,78 +1,55 @@
 import React from 'react';
-import { MdNotes, MdAdd, MdDarkMode, MdLightMode } from 'react-icons/md';
-import { useTheme } from '../../context/ThemeContext';
-import type { SortOption } from '../../types/note';
+import { MdNotes, MdAdd, MdMenu, MdSearch } from 'react-icons/md';
 
 interface NavbarProps {
   search: string;
-  sort: SortOption;
   onSearchChange: (value: string) => void;
-  onSortChange: (value: SortOption) => void;
   onCreateClick: () => void;
+  onMenuToggle: () => void;
   isLoading: boolean;
 }
 
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'newest', label: 'Newest first' },
-  { value: 'oldest', label: 'Oldest first' },
-  { value: 'a-z',    label: 'A → Z' },
-  { value: 'z-a',    label: 'Z → A' },
-];
-
 export const Navbar: React.FC<NavbarProps> = ({
-  search,
-  sort,
-  onSearchChange,
-  onSortChange,
-  onCreateClick,
-  isLoading,
+  search, onSearchChange, onCreateClick, onMenuToggle, isLoading,
 }) => {
-  const { theme, toggleTheme } = useTheme();
-
   return (
-    <nav className="w-full bg-surface border-b border-border/50 px-4 sm:px-6 py-4 flex items-center gap-2 sm:gap-3 shadow-lg animate-theme-transition flex-wrap">
-      <span className="text-lg sm:text-xl font-bold text-foreground tracking-tight flex items-center gap-2 flex-shrink-0">
-        <MdNotes size={24} />
-        <span className="hidden sm:inline">Notes App</span>
-      </span>
-
-      <div className="flex-1" />
-
-      <input
-        className="w-40 sm:w-56 bg-input border border-border/50 rounded-lg px-3 sm:px-4 py-2 text-foreground placeholder-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-        placeholder="Search..."
-        value={search}
-        onChange={e => onSearchChange(e.target.value)}
-        disabled={isLoading}
-      />
-
-      <select
-        className="bg-input border border-border/50 rounded-lg px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 cursor-pointer"
-        value={sort}
-        onChange={e => onSortChange(e.target.value as SortOption)}
-        disabled={isLoading}
+    <nav className="w-full bg-[var(--surface)] border-b border-[var(--border)] px-3 sm:px-4 py-3 flex items-center gap-3 shadow-sm flex-shrink-0 z-10">
+      <button
+        onClick={onMenuToggle}
+        className="lg:hidden p-2 rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--surface-2)] transition-colors"
+        aria-label="Toggle sidebar"
       >
-        {SORT_OPTIONS.map(o => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
+        <MdMenu size={22} />
+      </button>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <button
-          className="inline-flex items-center justify-center text-foreground hover:text-primary p-2 rounded-lg hover:bg-surface-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={toggleTheme}
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? <MdLightMode size={20} /> : <MdDarkMode size={20} />}
-        </button>
+      <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+        <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+          <MdNotes className="text-white" size={16} />
+        </div>
+        <span className="font-bold text-[var(--foreground)] text-sm tracking-tight">Notes</span>
+      </div>
 
+      <div className="flex-1 relative max-w-sm">
+        <MdSearch
+          size={18}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none"
+        />
+        <input
+          className="w-full bg-[var(--input)] border border-[var(--border)] rounded-lg pl-9 pr-3 py-2 text-[var(--foreground)] placeholder-[var(--muted-foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-200"
+          placeholder="Search notes..."
+          value={search}
+          onChange={e => onSearchChange(e.target.value)}
+          disabled={isLoading}
+        />
+      </div>
+
+      <div className="ml-auto flex-shrink-0">
         <button
-          className="inline-flex items-center justify-center gap-2 bg-primary hover:opacity-90 active:opacity-75 text-primary-foreground font-semibold text-sm px-4 sm:px-5 py-2.5 rounded-lg shadow-md shadow-blue-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
+          className="app-btn-primary flex items-center gap-1.5 text-sm"
           onClick={onCreateClick}
           disabled={isLoading}
         >
-          <MdAdd size={20} />
+          <MdAdd size={18} />
           <span className="hidden sm:inline">New Note</span>
         </button>
       </div>

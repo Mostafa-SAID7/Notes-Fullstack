@@ -59,22 +59,24 @@ public class CacheInterceptorBehavior<TRequest, TResponse>
     /// </summary>
     private string GenerateCacheKey(TRequest request)
     {
-        // For GetAllNotesQuery, use simple key
-        if (request.GetType().Name == "GetAllNotesQuery")
-            return "notes:all";
+        // Extract UserId for per-user cache isolation
+        var userIdProp = request.GetType().GetProperty("UserId");
+        var userId     = userIdProp?.GetValue(request) as string ?? "anon";
 
-        // For GetNoteByIdQuery, extract Id property
+        if (request.GetType().Name == "GetAllNotesQuery")
+            return $"notes:all:{userId}";
+
         if (request.GetType().Name == "GetNoteByIdQuery")
         {
-            var idProperty = request.GetType().GetProperty("Id");
-            if (idProperty != null)
+            var idProp = request.GetType().GetProperty("Id");
+            if (idProp != null)
             {
-                var id = idProperty.GetValue(request);
-                return $"notes:{id}";
+                var id = idProp.GetValue(request);
+                return $"notes:{id}:{userId}";
             }
         }
 
-        // Fallback to generic key
-        return $"{typeof(TRequest).Name}:{request.GetHashCode()}";
+        // Fallback — include userId to prevent cross-user leakage
+        return $"{typeof(TRequest).Name}:{userId}:{request.GetHashCode()}";
     }
 }

@@ -13,5 +13,6 @@ namespace NotesApi.Database.Models
         public bool IsPinned { get; set; } = false;
         public string Color { get; set; } = "default";
         public string Tags { get; set; } = "";
+        public string? UserId { get; set; }
     }
 }

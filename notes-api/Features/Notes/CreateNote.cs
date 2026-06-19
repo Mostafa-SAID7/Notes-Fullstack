@@ -7,6 +7,7 @@ using NotesApi.DTOs;
 namespace NotesApi.Features.Notes;
 
 public sealed record CreateNoteCommand(
+    string UserId,
     string Title,
     string Desc,
     string Color,
@@ -20,6 +21,7 @@ public sealed class CreateNoteHandler(IUnitOfWork uow, IMapper mapper)
         var now = DateTime.UtcNow;
         var note = new Note
         {
+            UserId      = request.UserId,
             Title       = request.Title,
             Desc        = request.Desc,
             Color       = request.Color,

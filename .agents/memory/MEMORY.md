@@ -1,2 +1,4 @@
 - [EF Core manual migrations](ef-core-manual-migrations.md) — manually written migrations need a designer file + history entry, or columns won't apply
 - [AutoMapper records ForCtorParam](automapper-record-ctorparam.md) — use ForCtorParam not ForMember when mapping to C# record constructor parameters
+- [Auth + JWT setup](auth-jwt.md) — Identity tables applied via raw SQL; suppress PendingModelChangesWarning; cache keys must include userId to prevent cross-user leakage
+- [Tailwind @apply opacity on CSS vars](tailwind-css-var-opacity.md) — Cannot use /40 opacity modifier on CSS-variable-defined colors in @apply; write focus styles as plain CSS rgba() instead

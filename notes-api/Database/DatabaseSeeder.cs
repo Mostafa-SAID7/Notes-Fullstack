@@ -6,6 +6,12 @@ public static class DatabaseSeeder
 {
     public static async Task SeedAsync(MyDbContext db, Microsoft.Extensions.Logging.ILogger logger)
     {
+        // Per-user seeding is now handled by AuthController on registration.
+        // Startup seed is disabled to avoid creating orphaned (userId=null) notes.
+        logger.LogInformation("Startup seed skipped — notes are seeded per-user on registration.");
+        await Task.CompletedTask;
+        return;
+
         if (db.Notes.Any())
         {
             logger.LogInformation("Database already has notes — skipping seed.");

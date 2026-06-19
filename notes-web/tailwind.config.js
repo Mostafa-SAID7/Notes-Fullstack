@@ -19,7 +19,7 @@ export default {
         background: { DEFAULT: 'var(--background)' },
         foreground: { DEFAULT: 'var(--foreground)' },
         primary: {
-          DEFAULT: 'var(--primary)',
+          DEFAULT: 'rgb(var(--primary-rgb) / <alpha-value>)',
           foreground: 'var(--primary-foreground)',
         },
         secondary: {

@@ -1,38 +1,42 @@
+using System.Security.Claims;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NotesApi.DTOs;
 using NotesApi.Features.Notes;
 
 namespace NotesApi.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class NotesController(IMediator mediator) : ControllerBase
 {
-    // GET api/Notes
+    private string UserId =>
+        User.FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? User.FindFirstValue("sub")
+        ?? throw new UnauthorizedAccessException("User ID claim missing.");
+
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<NoteDto>>> GetAll()
     {
-        var result = await mediator.Send(new GetAllNotesQuery());
+        var result = await mediator.Send(new GetAllNotesQuery(UserId));
         return Ok(result);
     }
 
-    // GET api/Notes/5
     [HttpGet("{id:int}")]
     public async Task<ActionResult<NoteDto>> GetById(int id)
     {
-        var result = await mediator.Send(new GetNoteByIdQuery(id));
-        if (result is null)
-            return NotFound();
-
+        var result = await mediator.Send(new GetNoteByIdQuery(UserId, id));
+        if (result is null) return NotFound();
         return Ok(result);
     }
 
-    // POST api/Notes
     [HttpPost]
     public async Task<ActionResult<NoteDto>> Create([FromBody] CreateNoteRequest request)
     {
         var command = new CreateNoteCommand(
+            UserId,
             request.Title,
             request.Desc,
             request.Color ?? "default",
@@ -41,47 +45,34 @@ public class NotesController(IMediator mediator) : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    // PUT api/Notes
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateNoteRequest request)
     {
         var command = new UpdateNoteCommand(
+            UserId,
             request.Id,
             request.Title,
             request.Desc,
             request.Color ?? "default",
             request.Tags ?? []);
         var result = await mediator.Send(command);
-
-        if (result is null)
-            return NotFound();
-
+        if (result is null) return NotFound();
         return Ok(result);
     }
 
-    // PATCH api/Notes/5/pin
     [HttpPatch("{id:int}/pin")]
     public async Task<IActionResult> Pin(int id, [FromBody] PinNoteRequest request)
     {
-        var command = new PinNoteCommand(id, request.IsPinned);
-        var result = await mediator.Send(command);
-
-        if (result is null)
-            return NotFound();
-
+        var result = await mediator.Send(new PinNoteCommand(UserId, id, request.IsPinned));
+        if (result is null) return NotFound();
         return Ok(result);
     }
 
-    // DELETE api/Notes/5
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var command = new DeleteNoteCommand(id);
-        var success = await mediator.Send(command);
-
-        if (!success)
-            return NotFound();
-
+        var success = await mediator.Send(new DeleteNoteCommand(UserId, id));
+        if (!success) return NotFound();
         return NoContent();
     }
 }

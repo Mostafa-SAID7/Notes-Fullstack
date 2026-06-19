@@ -17,17 +17,19 @@ export type NoteColor =
   | 'red'
   | 'purple'
   | 'orange'
-  | 'pink';
+  | 'pink'
+  | 'brown';
 
-export const NOTE_COLORS: { value: NoteColor; label: string; bg: string; border: string }[] = [
-  { value: 'default', label: 'Default', bg: 'bg-card',           border: 'border-border'    },
-  { value: 'yellow',  label: 'Yellow',  bg: 'bg-yellow-400/20',  border: 'border-yellow-400/50'  },
-  { value: 'green',   label: 'Green',   bg: 'bg-green-500/20',   border: 'border-green-500/50'   },
-  { value: 'blue',    label: 'Blue',    bg: 'bg-blue-500/20',    border: 'border-blue-500/50'    },
-  { value: 'red',     label: 'Red',     bg: 'bg-red-500/20',     border: 'border-red-500/50'     },
-  { value: 'purple',  label: 'Purple',  bg: 'bg-purple-500/20',  border: 'border-purple-500/50'  },
-  { value: 'orange',  label: 'Orange',  bg: 'bg-orange-500/20',  border: 'border-orange-500/50'  },
-  { value: 'pink',    label: 'Pink',    bg: 'bg-pink-500/20',    border: 'border-pink-500/50'    },
+export const NOTE_COLORS: { value: NoteColor; label: string; bg: string; border: string; swatch: string }[] = [
+  { value: 'default', label: 'Default', bg: 'bg-card',            border: 'border-border',           swatch: 'bg-surface-2'       },
+  { value: 'yellow',  label: 'Yellow',  bg: 'bg-yellow-400/15',   border: 'border-yellow-400/40',    swatch: 'bg-yellow-400'      },
+  { value: 'green',   label: 'Green',   bg: 'bg-green-500/15',    border: 'border-green-500/40',     swatch: 'bg-green-500'       },
+  { value: 'blue',    label: 'Blue',    bg: 'bg-blue-500/15',     border: 'border-blue-500/40',      swatch: 'bg-blue-500'        },
+  { value: 'red',     label: 'Red',     bg: 'bg-red-500/15',      border: 'border-red-500/40',       swatch: 'bg-red-500'         },
+  { value: 'purple',  label: 'Purple',  bg: 'bg-purple-500/15',   border: 'border-purple-500/40',    swatch: 'bg-purple-500'      },
+  { value: 'orange',  label: 'Orange',  bg: 'bg-orange-400/15',   border: 'border-orange-400/40',    swatch: 'bg-orange-400'      },
+  { value: 'pink',    label: 'Pink',    bg: 'bg-pink-400/15',     border: 'border-pink-400/40',      swatch: 'bg-pink-400'        },
+  { value: 'brown',   label: 'Brown',   bg: 'bg-amber-700/15',    border: 'border-amber-700/40',     swatch: 'bg-amber-700'       },
 ];
 
 export interface CreateNoteRequest {

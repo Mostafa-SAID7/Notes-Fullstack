@@ -1,10 +1,16 @@
 import type { Note, CreateNoteRequest, UpdateNoteRequest, PinNoteRequest, ApiError } from '../types/note';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/notes';
+const API_BASE = (import.meta.env.VITE_API_BASE ?? 'http://localhost:8000/api');
+const NOTES_URL = `${API_BASE}/notes`;
 
-if (import.meta.env.DEV) {
-  console.log('[API] Base URL:', API_BASE);
-}
+const getToken = (): string | null => localStorage.getItem('auth_token');
+
+const authHeaders = (): Record<string, string> => {
+  const token = getToken();
+  return token
+    ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    : { 'Content-Type': 'application/json' };
+};
 
 const parseError = async (response: Response): Promise<ApiError> => {
   try {
@@ -19,28 +25,21 @@ const parseError = async (response: Response): Promise<ApiError> => {
 };
 
 export const getAllNotes = async (): Promise<Note[]> => {
-  try {
-    const response = await fetch(API_BASE);
-    if (!response.ok) throw await parseError(response);
-    return response.json();
-  } catch (err) {
-    if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-      console.error('[API] Connection Error: Cannot reach API at', API_BASE);
-    }
-    throw err;
-  }
+  const response = await fetch(NOTES_URL, { headers: authHeaders() });
+  if (!response.ok) throw await parseError(response);
+  return response.json();
 };
 
 export const getNoteById = async (id: number): Promise<Note> => {
-  const response = await fetch(`${API_BASE}/${id}`);
+  const response = await fetch(`${NOTES_URL}/${id}`, { headers: authHeaders() });
   if (!response.ok) throw await parseError(response);
   return response.json();
 };
 
 export const createNote = async (request: CreateNoteRequest): Promise<Note> => {
-  const response = await fetch(API_BASE, {
+  const response = await fetch(NOTES_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(request),
   });
   if (!response.ok) throw await parseError(response);
@@ -48,9 +47,9 @@ export const createNote = async (request: CreateNoteRequest): Promise<Note> => {
 };
 
 export const updateNote = async (request: UpdateNoteRequest): Promise<Note> => {
-  const response = await fetch(API_BASE, {
+  const response = await fetch(NOTES_URL, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(request),
   });
   if (!response.ok) throw await parseError(response);
@@ -58,9 +57,9 @@ export const updateNote = async (request: UpdateNoteRequest): Promise<Note> => {
 };
 
 export const pinNote = async (id: number, request: PinNoteRequest): Promise<Note> => {
-  const response = await fetch(`${API_BASE}/${id}/pin`, {
+  const response = await fetch(`${NOTES_URL}/${id}/pin`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(request),
   });
   if (!response.ok) throw await parseError(response);
@@ -68,7 +67,10 @@ export const pinNote = async (id: number, request: PinNoteRequest): Promise<Note
 };
 
 export const deleteNote = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+  const response = await fetch(`${NOTES_URL}/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
   if (!response.ok) throw await parseError(response);
 };
 
