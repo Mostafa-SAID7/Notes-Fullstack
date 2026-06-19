@@ -5,18 +5,14 @@ using NotesApi.DTOs;
 
 namespace NotesApi.Features.Notes;
 
-// ── Query ─────────────────────────────────────────────────────────────────────
-
-public sealed record GetNoteByIdQuery(int Id) : IRequest<NoteDto?>, IQuery;
-
-// ── Handler ───────────────────────────────────────────────────────────────────
+public sealed record GetNoteByIdQuery(string UserId, int Id) : IRequest<NoteDto?>, IQuery;
 
 public sealed class GetNoteByIdHandler(IUnitOfWork uow, IMapper mapper)
     : IRequestHandler<GetNoteByIdQuery, NoteDto?>
 {
     public async Task<NoteDto?> Handle(GetNoteByIdQuery request, CancellationToken ct)
     {
-        var note = await uow.Notes.GetByIdAsync(request.Id);
+        var note = await uow.Notes.GetByIdAndUserAsync(request.Id, request.UserId);
         return note is null ? null : mapper.Map<NoteDto>(note);
     }
 }

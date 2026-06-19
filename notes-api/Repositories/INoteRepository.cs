@@ -9,6 +9,6 @@ namespace NotesApi.Repositories;
 /// </summary>
 public interface INoteRepository : IRepository<Note>
 {
-    // Add note-specific query methods here as the app grows.
-    // e.g.: Task<IReadOnlyList<Note>> SearchAsync(string term);
+    Task<IReadOnlyList<Note>> GetAllByUserAsync(string userId);
+    Task<Note?> GetByIdAndUserAsync(int id, string userId);
 }

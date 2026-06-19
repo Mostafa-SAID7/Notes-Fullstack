@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdWarning } from 'react-icons/md';
+import { MdDeleteForever } from 'react-icons/md';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -32,38 +32,39 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
       onClick={e => { if (e.target === e.currentTarget) onCancel(); }}
     >
-      <div className="bg-card border border-border rounded-xl shadow-xl p-6 max-w-sm w-full mx-4 animate-scale-in">
-        <div className="flex items-start gap-3 mb-4">
-          {isDangerous && (
-            <MdWarning className="text-red-400 flex-shrink-0 mt-0.5 animate-slide-down" size={24} />
-          )}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-            <p className="text-muted-foreground text-sm mt-1">{message}</p>
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 animate-scale-in">
+        {isDangerous && (
+          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 mx-auto mb-4">
+            <MdDeleteForever size={28} className="text-red-400" />
           </div>
-        </div>
+        )}
+        <h3 className="text-xl font-bold text-[var(--foreground)] text-center mb-1.5" style={{ fontFamily: 'var(--font-heading)' }}>{title}</h3>
+        <p className="text-sm text-[var(--muted-foreground)] text-center leading-relaxed mb-6">{message}</p>
 
-        <div className="flex gap-3 justify-end pt-4">
+        <div className="flex gap-3">
           <button
-            className="px-4 py-2 rounded-lg text-foreground hover:bg-surface-2 transition-colors duration-150 disabled:opacity-50"
+            className="app-btn-secondary flex-1"
             onClick={onCancel}
             disabled={isLoading}
           >
             {cancelText}
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium transition-colors duration-150 disabled:opacity-50 ${
+            className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150 disabled:opacity-50 ${
               isDangerous
                 ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-primary hover:opacity-90 text-primary-foreground'
+                : 'app-btn-primary'
             }`}
             onClick={onConfirm}
             disabled={isLoading}
           >
-            {isLoading ? 'Processing...' : confirmText}
+            {isLoading
+              ? <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              : confirmText
+            }
           </button>
         </div>
       </div>

@@ -1,11 +1,7 @@
 import { useState, useCallback } from 'react';
-import type { Note as NoteType } from '../types/note';
+import type { Note as NoteType, NoteColor } from '../types/note';
 import * as api from '../services/api';
 
-/**
- * Custom hook for managing notes state and operations
- * Handles: loading, errors, CRUD operations
- */
 export const useNotes = () => {
   const [notes, setNotes] = useState<NoteType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,11 +22,16 @@ export const useNotes = () => {
     }
   }, []);
 
-  const createNoteAsync = useCallback(async (title: string, desc: string): Promise<void> => {
+  const createNoteAsync = useCallback(async (
+    title: string,
+    desc: string,
+    color: NoteColor,
+    tags: string[],
+  ): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
-      await api.createNote({ title, desc });
+      await api.createNote({ title, desc, color, tags });
       await loadNotes();
     } catch (err) {
       const apiError = err as api.ApiError;
@@ -40,11 +41,17 @@ export const useNotes = () => {
     }
   }, [loadNotes]);
 
-  const updateNoteAsync = useCallback(async (id: number, title: string, desc: string): Promise<void> => {
+  const updateNoteAsync = useCallback(async (
+    id: number,
+    title: string,
+    desc: string,
+    color: NoteColor,
+    tags: string[],
+  ): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
-      await api.updateNote({ id, title, desc });
+      await api.updateNote({ id, title, desc, color, tags });
       await loadNotes();
     } catch (err) {
       const apiError = err as api.ApiError;
@@ -53,6 +60,24 @@ export const useNotes = () => {
       setLoading(false);
     }
   }, [loadNotes]);
+
+  const pinNoteAsync = useCallback(async (id: number, isPinned: boolean): Promise<void> => {
+    setError(null);
+    try {
+      const updated = await api.pinNote(id, { isPinned });
+      setNotes(prev =>
+        prev
+          .map(n => n.id === id ? updated : n)
+          .sort((a, b) => {
+            if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          })
+      );
+    } catch (err) {
+      const apiError = err as api.ApiError;
+      setError(apiError.message || 'Failed to update pin');
+    }
+  }, []);
 
   const deleteNoteAsync = useCallback(async (id: number): Promise<void> => {
     setLoading(true);
@@ -77,6 +102,7 @@ export const useNotes = () => {
     loadNotes,
     createNoteAsync,
     updateNoteAsync,
+    pinNoteAsync,
     deleteNoteAsync,
     clearError,
   };

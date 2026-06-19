@@ -1,0 +1,7 @@
+- [EF Core manual migrations](ef-core-manual-migrations.md) — manually written migrations need a designer file + history entry, or columns won't apply
+- [AutoMapper records ForCtorParam](automapper-record-ctorparam.md) — use ForCtorParam not ForMember when mapping to C# record constructor parameters
+- [Auth + JWT setup](auth-jwt.md) — Identity tables applied via raw SQL; suppress PendingModelChangesWarning; cache keys must include userId to prevent cross-user leakage
+- [Tailwind @apply opacity on CSS vars](tailwind-css-var-opacity.md) — Cannot use /40 opacity modifier on CSS-variable-defined colors in @apply; write focus styles as plain CSS rgba() instead
+- [Token key sync](token-key-sync.md) — api.ts getToken() reads localStorage by key name independently of AuthContext; if the key name ever changes in AuthContext, update api.ts too or all API calls silently send no token → 401s.
+- [Vite proxy for Replit](vite-proxy-replit.md) — Browser inside Replit preview cannot reach localhost ports; add Vite server.proxy /api→localhost:PORT and set VITE_API_BASE=/api so all fetch calls stay same-origin.
+- [Note.tags null guard](tags-null-guard.md) — Note.tags from DB can be null; always guard with typeof n.tags === 'string' before calling .split().

@@ -1,25 +1,38 @@
 import React from 'react';
+import { MdAdd, MdNotes } from 'react-icons/md';
 
 interface EmptyStateProps {
   onCreateClick: () => void;
   isLoading: boolean;
 }
 
-/**
- * EmptyState component - Shows when no notes exist
- * Responsibilities: Display empty state message and CTA
- */
 export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick, isLoading }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-24 gap-4">
-      <div className="text-5xl">📭</div>
-      <p className="text-muted-foreground text-base">No notes yet.</p>
+    <div className="flex flex-col items-center justify-center py-20 gap-6 select-none">
+      <div className="relative">
+        <div className="w-24 h-24 rounded-3xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center shadow-lg">
+          <MdNotes size={44} style={{ color: 'rgba(var(--primary-rgb), 0.4)' }} />
+        </div>
+        <div
+          className="absolute -bottom-2 -right-2 w-9 h-9 rounded-xl flex items-center justify-center shadow-lg"
+          style={{ background: 'rgb(var(--primary-rgb))' }}
+        >
+          <MdAdd size={20} className="text-white" />
+        </div>
+      </div>
+      <div className="text-center max-w-xs">
+        <h3 className="text-2xl font-bold text-[var(--foreground)] mb-1" style={{ fontFamily: 'var(--font-heading)' }}>No notes yet</h3>
+        <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+          Start capturing your thoughts, ideas, and tasks. Your notes will appear here.
+        </p>
+      </div>
       <button
-        className="inline-flex items-center justify-center gap-2 bg-primary hover:opacity-90 active:opacity-75 text-primary-foreground font-semibold text-sm px-4 sm:px-5 py-2.5 rounded-lg shadow-md shadow-blue-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
+        className="app-btn-primary px-6 py-2.5 gap-2"
         onClick={onCreateClick}
         disabled={isLoading}
       >
-        Take your first note
+        <MdAdd size={18} />
+        Create your first note
       </button>
     </div>
   );

@@ -14,7 +14,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onClose }) =>
   if (!message) return null;
 
   return (
-    <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-3 mx-6 mt-4 rounded-lg flex justify-between items-center">
+    <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-5 py-3 mx-6 mt-5 rounded-xl flex justify-between items-center gap-3 text-sm">
       <span>{message}</span>
       <button
         onClick={onClose}

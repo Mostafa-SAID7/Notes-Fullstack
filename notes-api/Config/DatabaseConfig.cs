@@ -6,9 +6,6 @@ namespace NotesApi.Config;
 
 public static class DatabaseConfig
 {
-    /// <summary>
-    /// Registers the EF Core DbContext using the connection string from configuration.
-    /// </summary>
     public static IServiceCollection AddDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -18,15 +15,13 @@ public static class DatabaseConfig
                 "Connection string 'PostgresSqlConnection' is not configured.");
 
         services.AddDbContext<MyDbContext>(options =>
-            options.UseNpgsql(connStr));
+            options.UseNpgsql(connStr)
+                   .ConfigureWarnings(w => w.Ignore(
+                       Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
         return services;
     }
 
-    /// <summary>
-    /// Ensures the target PostgreSQL database exists, then applies any pending
-    /// EF Core migrations. Safe to call on every startup — fully idempotent.
-    /// </summary>
     public static async Task InitialiseDatabaseAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
@@ -34,7 +29,6 @@ public static class DatabaseConfig
         var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var connStr = config.GetConnectionString("PostgresSqlConnection")!;
 
-        // Connect to the "postgres" maintenance DB to create the target DB if needed.
         var csb = new NpgsqlConnectionStringBuilder(connStr);
         var targetDb = csb.Database;
         csb.Database = "postgres";
@@ -61,7 +55,6 @@ public static class DatabaseConfig
             throw;
         }
 
-        // Apply pending EF Core migrations.
         var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
         try
         {
@@ -72,6 +65,15 @@ public static class DatabaseConfig
         {
             app.Logger.LogError(ex, "EF Core migration failed.");
             throw;
+        }
+
+        try
+        {
+            await DatabaseSeeder.SeedAsync(db, app.Logger);
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogError(ex, "Database seeding failed.");
         }
     }
 }

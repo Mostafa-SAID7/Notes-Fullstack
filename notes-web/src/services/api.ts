@@ -1,24 +1,17 @@
-/**
- * API Service - Centralized HTTP communication layer
- * Responsibility: Handle all HTTP requests to the backend
- * Concerns: Fetch, error parsing, response handling
- * 
- * Type definitions are in types/note.ts
- */
+import type { Note, CreateNoteRequest, UpdateNoteRequest, PinNoteRequest, ApiError } from '../types/note';
 
-import type { Note, CreateNoteRequest, UpdateNoteRequest, ApiError } from '../types/note';
+const API_BASE = (import.meta.env.VITE_API_BASE ?? 'http://localhost:8000/api');
+const NOTES_URL = `${API_BASE}/notes`;
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5272/api/notes';
+const getToken = (): string | null => localStorage.getItem('nf_token');
 
-// Log API configuration in development
-if (import.meta.env.DEV) {
-  console.log('[API] Base URL:', API_BASE);
-}
+const authHeaders = (): Record<string, string> => {
+  const token = getToken();
+  return token
+    ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    : { 'Content-Type': 'application/json' };
+};
 
-/**
- * Parse error response from backend
- * Converts HTTP error responses to standardized ApiError format
- */
 const parseError = async (response: Response): Promise<ApiError> => {
   try {
     return await response.json();
@@ -31,97 +24,54 @@ const parseError = async (response: Response): Promise<ApiError> => {
   }
 };
 
-/**
- * Get all notes
- */
 export const getAllNotes = async (): Promise<Note[]> => {
-  try {
-    const response = await fetch(API_BASE);
-
-    if (!response.ok) {
-      const error = await parseError(response);
-      throw error;
-    }
-
-    return response.json();
-  } catch (err) {
-    if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-      console.error('[API] Connection Error: Cannot reach API at', API_BASE);
-      console.error('   Make sure:');
-      console.error('   1. Backend is running: dotnet run --launch-profile http');
-      console.error('   2. Backend is on port 5272');
-      console.error('   3. No firewall is blocking port 5272');
-    }
-    throw err;
-  }
+  const response = await fetch(NOTES_URL, { headers: authHeaders() });
+  if (!response.ok) throw await parseError(response);
+  return response.json();
 };
 
-/**
- * Get note by ID
- */
 export const getNoteById = async (id: number): Promise<Note> => {
-  const response = await fetch(`${API_BASE}/${id}`);
-
-  if (!response.ok) {
-    const error = await parseError(response);
-    throw error;
-  }
-
+  const response = await fetch(`${NOTES_URL}/${id}`, { headers: authHeaders() });
+  if (!response.ok) throw await parseError(response);
   return response.json();
 };
 
-/**
- * Create a new note
- */
 export const createNote = async (request: CreateNoteRequest): Promise<Note> => {
-  const response = await fetch(API_BASE, {
+  const response = await fetch(NOTES_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(request),
   });
-
-  if (!response.ok) {
-    const error = await parseError(response);
-    throw error;
-  }
-
+  if (!response.ok) throw await parseError(response);
   return response.json();
 };
 
-/**
- * Update an existing note
- */
 export const updateNote = async (request: UpdateNoteRequest): Promise<Note> => {
-  const response = await fetch(API_BASE, {
+  const response = await fetch(NOTES_URL, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(request),
   });
-
-  if (!response.ok) {
-    const error = await parseError(response);
-    throw error;
-  }
-
+  if (!response.ok) throw await parseError(response);
   return response.json();
 };
 
-/**
- * Delete a note
- */
-export const deleteNote = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE}/${id}`, {
-    method: 'DELETE',
+export const pinNote = async (id: number, request: PinNoteRequest): Promise<Note> => {
+  const response = await fetch(`${NOTES_URL}/${id}/pin`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+    body: JSON.stringify(request),
   });
-
-  if (!response.ok) {
-    const error = await parseError(response);
-    throw error;
-  }
+  if (!response.ok) throw await parseError(response);
+  return response.json();
 };
 
-/**
- * Re-export types for convenience
- * Allows: import { ApiError, Note } from './services/api'
- */
+export const deleteNote = async (id: number): Promise<void> => {
+  const response = await fetch(`${NOTES_URL}/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+  if (!response.ok) throw await parseError(response);
+};
+
 export type { Note, CreateNoteRequest, UpdateNoteRequest, ApiError } from '../types/note';

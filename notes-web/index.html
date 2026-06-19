@@ -2,15 +2,62 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
+    <title>NoteFlow — Smart Notes App</title>
+    <meta name="description" content="NoteFlow is a beautiful, fast notes app. Capture ideas, create colour-coded notes, pin favourites, filter by tags and search in real time." />
+    <meta name="keywords" content="notes app, note taking, organized notes, pinned notes, tags, productivity, NoteFlow" />
+    <meta name="author" content="NoteFlow" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://noteflow.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://noteflow.app/" />
+    <meta property="og:title" content="NoteFlow — Smart Notes App" />
+    <meta property="og:description" content="Capture ideas, colour-code notes, pin favourites and search in real time. Beautiful dark & light themes." />
+    <meta property="og:image" content="https://noteflow.app/og-image.png" />
+    <meta property="og:site_name" content="NoteFlow" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NoteFlow — Smart Notes App" />
+    <meta name="twitter:description" content="Capture ideas, colour-code notes, pin favourites and search in real time." />
+    <meta name="twitter:image" content="https://noteflow.app/og-image.png" />
+
+    <!-- Theme & PWA -->
+    <meta name="theme-color" content="#0F172A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
+    <meta name="application-name" content="NoteFlow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="NoteFlow" />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/logo.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Notes App — A modern, clean notes application with a beautiful dark interface" />
-    <meta name="theme-color" content="#0F172A" />
-    <title>Notes App</title>
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "NoteFlow",
+      "description": "A beautiful, fast notes app with colour-coded cards, tags, pin support and real-time search.",
+      "url": "https://noteflow.app",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": ["Colour-coded notes", "Pin favourites", "Tag filtering", "Real-time search", "Dark & light themes", "Masonry grid layout"]
+    }
+    </script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>
